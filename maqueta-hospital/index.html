@@ -1,0 +1,1359 @@
+<title>Hospital Verde: maqueta escolar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: cuaderno de obra — una columna de lectura con visor 3D y planos generados desde las mismas medidas */
+:root{
+  --bg:#f3f6f4; --paper:#ffffff; --ink:#15302a; --muted:#566b65; --line:#d3ddd8;
+  --teal:#0b6f63; --teal-soft:#dcefea; --eco:#4b8a2c; --eco-soft:#e3f0da;
+  --red:#c2372c; --red-soft:#f8e1de; --sun:#1d4f8f; --sun-soft:#dfe8f5;
+  --water:#1f86b8; --water-soft:#dceef7; --warn:#a2650b; --warn-soft:#fbefd9;
+  --plan-bg:#fbfdfc; --plan-ink:#24433c; --plan-dim:#0b6f63;
+  --f-display:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1716; --paper:#16211f; --ink:#e3ece9; --muted:#9db1ab; --line:#2a3a37;
+  --teal:#4cc2b0; --teal-soft:#16332f; --eco:#8cc96a; --eco-soft:#1c2e17;
+  --red:#ff7a6e; --red-soft:#3a1d1a; --sun:#8fb6ff; --sun-soft:#1a2740;
+  --water:#6cc4ee; --water-soft:#14303d; --warn:#f0b65c; --warn-soft:#352812;
+  --plan-bg:#121c1a; --plan-ink:#cfe0db; --plan-dim:#4cc2b0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1716; --paper:#16211f; --ink:#e3ece9; --muted:#9db1ab; --line:#2a3a37;
+  --teal:#4cc2b0; --teal-soft:#16332f; --eco:#8cc96a; --eco-soft:#1c2e17;
+  --red:#ff7a6e; --red-soft:#3a1d1a; --sun:#8fb6ff; --sun-soft:#1a2740;
+  --water:#6cc4ee; --water-soft:#14303d; --warn:#f0b65c; --warn-soft:#352812;
+  --plan-bg:#121c1a; --plan-ink:#cfe0db; --plan-dim:#4cc2b0; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(1.55rem,3.4vw,2.2rem);font-weight:800}
+h3{font-size:1.25rem;font-weight:700}
+h4{font-size:1.02rem;font-weight:700}
+p{margin:0}
+.prose{max-width:68ch}
+.muted{color:var(--muted)}
+.mono,code{font-family:var(--f-mono);font-size:.88em}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+/* Encabezado */
+header.top{background:var(--paper);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:28px 22px;display:grid;gap:14px}
+.lead{font-size:1.12rem;max-width:62ch;color:var(--muted)}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--f-mono);font-size:.8rem;padding:4px 10px;border-radius:999px;background:var(--teal-soft);color:var(--teal)}
+.chip.eco{background:var(--eco-soft);color:var(--eco)}
+.chip.sun{background:var(--sun-soft);color:var(--sun)}
+.chip.water{background:var(--water-soft);color:var(--water)}
+
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+nav.toc .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:thin}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--ink);font-size:.9rem;padding:6px 10px;border-radius:8px}
+nav.toc a:hover{background:var(--teal-soft);color:var(--teal)}
+
+section.block{padding-block:48px 8px}
+section.block > .wrap{display:grid;gap:22px}
+.sec-head{display:grid;gap:8px;border-top:2px solid var(--ink);padding-top:14px}
+
+/* Visor 3D */
+.viewer{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid}
+.viewer-canvas{position:relative;height:clamp(340px,58vw,560px);background:linear-gradient(#dfeef3,#f3f6f4)}
+:root[data-theme="dark"] .viewer-canvas{background:linear-gradient(#1b2b33,#0f1716)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .viewer-canvas{background:linear-gradient(#1b2b33,#0f1716)}}
+.viewer-canvas canvas{display:block;width:100%;height:100%;touch-action:none}
+.viewer-msg{position:absolute;inset:auto 12px 12px 12px;font-size:.85rem;color:var(--muted);pointer-events:none}
+.stage-badge{position:absolute;top:12px;left:12px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 12px;max-width:min(360px,calc(100% - 24px));font-size:.9rem;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.stage-badge b{font-family:var(--f-display)}
+.controls{display:grid;gap:12px;padding:14px;border-top:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row .lbl{font-size:.82rem;font-family:var(--f-mono);color:var(--muted);min-width:68px}
+button{font:inherit;font-size:.9rem;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:7px 12px;border-radius:9px}
+button:hover{border-color:var(--teal)}
+button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--paper)}
+button.primary{background:var(--teal);color:var(--paper);border-color:var(--teal);font-weight:700}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--teal)}
+.stage-out{font-family:var(--f-mono);font-size:.85rem;min-width:94px}
+
+/* Tarjetas y tablas */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}
+.card ul,.card ol{margin:0;padding-left:1.2em}
+.card li+li{margin-top:4px}
+.tbl-wrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tfoot td{font-weight:700;background:var(--teal-soft)}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:.72rem;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.tag.must{background:var(--red-soft);color:var(--red)}
+.tag.swap{background:var(--eco-soft);color:var(--eco)}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px;border:1px solid rgba(0,0,0,.15)}
+
+/* Planos */
+.plan{background:var(--plan-bg);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;min-width:0}
+.plan .svgbox{overflow-x:auto}
+.plan svg{display:block;width:100%;min-width:560px;height:auto}
+.plan figcaption{font-size:.88rem;color:var(--muted)}
+.plan.small svg{min-width:0}
+
+/* Notas */
+.note{border-radius:10px;padding:12px 14px;font-size:.95rem;display:grid;gap:4px}
+.note.tip{background:var(--teal-soft)}
+.note.warn{background:var(--warn-soft)}
+.note.err{background:var(--red-soft)}
+.note b{font-family:var(--f-display)}
+
+/* Ecotecnologías */
+.eco-card{border-top:6px solid var(--eco)}
+.eco-card.sun{border-top-color:var(--sun)}
+.eco-card.water{border-top-color:var(--water)}
+.eco-card dl{margin:0;display:grid;gap:8px}
+.eco-card dt{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.eco-card dd{margin:0}
+
+/* Etapas */
+.stage{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:16px;scroll-margin-top:70px}
+.stage-top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.stage-num{font-family:var(--f-mono);font-size:.8rem;color:var(--teal)}
+.stage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.step{display:grid;gap:6px;align-content:start;min-width:0}
+.step h4{display:flex;gap:8px;align-items:baseline}
+.step h4 span{font-family:var(--f-mono);font-size:.75rem;color:var(--paper);background:var(--teal);border-radius:5px;padding:1px 6px}
+.step ol,.step ul{margin:0;padding-left:1.2em}
+.step li+li{margin-top:3px}
+.script{background:var(--bg);border-left:4px solid var(--teal);border-radius:0 10px 10px 0;padding:12px 14px;font-style:italic}
+
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.day{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:.92rem;display:grid;gap:4px;align-content:start}
+.day b{font-family:var(--f-display)}
+
+footer{padding-block:40px 60px;color:var(--muted);font-size:.9rem}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+@media (max-width:520px){body{font-size:16px}.stage{padding:16px}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <span class="eyebrow">Proyecto escolar · Bachillerato · Maqueta con 3 ecotecnologías</span>
+    <h1>Hospital Verde</h1>
+    <p class="lead">Tu guía completa para construir la maqueta de un hospital de un piso, con techo desmontable para ver todos los interiores amueblados, una pequeña zona urbana alrededor y tres ecotecnologías integradas: paneles solares, captación de agua de lluvia y azotea verde.</p>
+    <div class="facts">
+      <span class="chip">Base 80 × 60 cm</span>
+      <span class="chip">Hospital 50 × 30 cm</span>
+      <span class="chip">Muros 10 cm de alto</span>
+      <span class="chip">Escala aprox. 1:30</span>
+      <span class="chip sun">Paneles solares</span>
+      <span class="chip water">Agua de lluvia</span>
+      <span class="chip eco">Azotea verde</span>
+      <span class="chip">≈ $1,290 MXN</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Secciones">
+  <div class="wrap">
+    <a href="#propuesta">Propuesta 3D</a>
+    <a href="#diseno">1. Diseño</a>
+    <a href="#medidas">2. Medidas</a>
+    <a href="#planos">3. Planos</a>
+    <a href="#eco">4. Ecotecnologías</a>
+    <a href="#materiales">5. Materiales</a>
+    <a href="#plan-trabajo">6. Organización</a>
+    <a href="#construccion">7. Construcción</a>
+    <a href="#guion">8. Guion narrado</a>
+  </div>
+</nav>
+
+<main>
+<section class="block" id="propuesta">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Propuesta visual</span>
+      <h2>Así se verá tu maqueta terminada</h2>
+      <p class="prose muted">Este modelo 3D está dibujado con las medidas exactas de esta guía. Gíralo arrastrando con el dedo o el ratón, acércate con dos dedos o la rueda. El techo aparece levantado para que veas los interiores. Usa la barra de etapas para ver cómo se construye paso a paso, o presiona <b>Ver construcción</b> para la animación con voz.</p>
+    </div>
+    <div class="viewer">
+      <div class="viewer-canvas" id="viewer">
+        <div class="stage-badge" id="stageBadge"><b>Etapa 11 · Maqueta terminada</b><br><span class="muted">Hospital completo con sus tres ecotecnologías.</span></div>
+        <div class="viewer-msg" id="viewerMsg">Cargando el modelo 3D…</div>
+      </div>
+      <div class="controls">
+        <div class="row">
+          <span class="lbl">Etapa</span>
+          <input type="range" id="stageRange" min="1" max="11" value="11" step="1" aria-label="Etapa de construcción">
+          <span class="stage-out" id="stageOut">11 de 11</span>
+        </div>
+        <div class="row">
+          <button class="primary" id="playBtn" type="button">▶ Ver construcción</button>
+          <button id="voiceBtn" type="button" aria-pressed="true">Voz: activada</button>
+          <button id="speakBtn" type="button">Escuchar esta etapa</button>
+        </div>
+        <div class="row" role="group" aria-label="Techo">
+          <span class="lbl">Techo</span>
+          <button type="button" data-roof="on" aria-pressed="false">Puesto</button>
+          <button type="button" data-roof="lift" aria-pressed="true">Levantado</button>
+          <button type="button" data-roof="off" aria-pressed="false">Quitado (ver interior)</button>
+        </div>
+        <div class="row" role="group" aria-label="Cámara">
+          <span class="lbl">Vista</span>
+          <button type="button" data-cam="iso">Perspectiva</button>
+          <button type="button" data-cam="front">Frente</button>
+          <button type="button" data-cam="side">Lateral</button>
+          <button type="button" data-cam="back">Trasera</button>
+          <button type="button" data-cam="top">Desde arriba</button>
+          <button type="button" data-cam="inside">Interior</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="diseno">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 1</span>
+      <h2>Diseño general del hospital</h2>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <h3>Un solo piso</h3>
+        <p>Elegimos <b>un piso</b> porque es más fácil de construir, más firme y permite ver <b>todas</b> las habitaciones desde arriba. Con dos pisos tendrías que hacer escaleras, un entrepiso y las habitaciones de abajo quedarían ocultas.</p>
+      </div>
+      <div class="card">
+        <h3>Techo desmontable en 2 mitades</h3>
+        <p>El techo se divide en dos tapas que solo se apoyan sobre los muros. Una mitad lleva la <b>azotea verde</b> y la otra los <b>paneles solares</b>. Las levantas y se ve todo el interior amueblado.</p>
+      </div>
+      <div class="card">
+        <h3>Escala aproximada 1:30</h3>
+        <p>1 cm de la maqueta equivale a 30 cm reales. Los muros de 10 cm representan 3 m; una puerta de 7 cm representa 2.10 m; una cama de 6.5 cm representa 1.95 m. Así todo se ve proporcionado.</p>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Exterior</h3>
+        <ul>
+          <li><b>Fachada principal</b> hacia la calle, con letrero "HOSPITAL", marquesina (techito) sobre la entrada y ventanas con acetato.</li>
+          <li><b>Entrada de pacientes</b> al centro del frente: puerta doble de 6 cm que da a la recepción.</li>
+          <li><b>Entrada de ambulancias</b> en el costado derecho, directo al área de urgencias, con marquesina roja "URGENCIAS" y carril propio.</li>
+          <li><b>Estacionamiento</b> de 5 cajones (uno para personas con discapacidad).</li>
+          <li><b>Calle</b> con línea central y paso peatonal; <b>banqueta</b> alrededor.</li>
+          <li><b>Jardines</b> al frente, a la izquierda y atrás, con 9 árboles, arbustos y una banca.</li>
+          <li><b>Señalamientos</b>: "H" de hospital, "E" de estacionamiento, ambulancias, discapacidad, flechas y "No estacionarse".</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Interior (todo amueblado)</h3>
+        <ul>
+          <li><b>Frente:</b> farmacia, recepción con sala de espera, consultorio 1 y consultorio 2.</li>
+          <li><b>Centro:</b> pasillo de 5 cm que conecta todo.</li>
+          <li><b>Fondo:</b> baño de mujeres, baño de hombres, habitación 1, habitación 2 y enfermería.</li>
+          <li><b>Lado derecho completo:</b> urgencias, conectada al pasillo y a la entrada de ambulancias.</li>
+          <li>Cada espacio tiene su color de piso y sus muebles para que se reconozca a simple vista.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="medidas">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 2</span>
+      <h2>Medidas definitivas</h2>
+      <p class="prose muted">Estas medidas son las únicas que usaremos en todo el proyecto. Todas están en centímetros. Las coordenadas se miden desde la <b>esquina trasera izquierda</b> de la base: <b>x</b> hacia la derecha (0 a 80) y <b>y</b> hacia la calle (0 a 60). Los planos de la sección 3 tienen la misma cuadrícula.</p>
+    </div>
+
+    <div class="note tip"><b>Regla de oro de las medidas</b><span>Los muros miden 0.5 cm de grueso (cartón pluma de 5 mm). Por eso, antes de cortar una división interior, <b>mide el hueco real en tu maqueta</b> y corta 1 mm menos. Si tu cartón es más grueso o delgado, solo cambia esa medida, nunca la distribución.</span></div>
+
+    <h3>Base y zonas exteriores</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Zona</th><th>Ubicación (x / y)</th><th>Medida</th><th>Color o material</th></tr></thead>
+      <tbody>
+        <tr><td>Base completa</td><td class="num">0–80 / 0–60</td><td class="num">80 × 60</td><td>Cartón pluma 5 mm sobre cartón corrugado</td></tr>
+        <tr><td>Hospital (por fuera)</td><td class="num">6–56 / 10–40</td><td class="num">50 × 30</td><td>Muros de cartón pluma, 10 cm de alto</td></tr>
+        <tr><td>Calle</td><td class="num">0–80 / 50–60</td><td class="num">80 × 10</td><td>Gris oscuro, línea central amarilla</td></tr>
+        <tr><td>Banqueta</td><td class="num">0–80 / 46–50</td><td class="num">80 × 4</td><td>Gris claro (cartulina)</td></tr>
+        <tr><td>Plaza de acceso</td><td class="num">6–56 / 40–46</td><td class="num">50 × 6</td><td>Gris claro con 2 jardineras</td></tr>
+        <tr><td>Jardín izquierdo</td><td class="num">0–6 / 0–46</td><td class="num">6 × 46</td><td>Verde, 3 árboles</td></tr>
+        <tr><td>Jardín trasero</td><td class="num">0–65 / 0–10</td><td class="num">65 × 10</td><td>Verde, árboles, banca y cisterna</td></tr>
+        <tr><td>Carril de ambulancias</td><td class="num">57–65 / 10–50</td><td class="num">8 × 40</td><td>Gris oscuro, flechas blancas</td></tr>
+        <tr><td>Estacionamiento</td><td class="num">65–80 / 6–46</td><td class="num">15 × 40</td><td>5 cajones de 8 × 15</td></tr>
+        <tr><td>Marquesina de ambulancias</td><td class="num">56–64 / 21–31</td><td class="num">8 × 10, a 9 de alto</td><td>Cartón pluma, franja roja</td></tr>
+        <tr><td>Marquesina de entrada</td><td class="num">17–27 / 40–44</td><td class="num">10 × 4, a 8 de alto</td><td>Cartón pluma blanco</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Habitaciones</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Espacio</th><th>Ubicación (x / y)</th><th>Medida entre ejes</th><th>Espacio libre interior</th><th>Color de piso</th></tr></thead>
+      <tbody>
+        <tr><td>Farmacia</td><td class="num">6–14 / 28–40</td><td class="num">8 × 12</td><td class="num">7.2 × 11</td><td><span class="swatch" style="background:#f3e3b5"></span>Crema</td></tr>
+        <tr><td>Recepción y sala de espera</td><td class="num">14–30 / 28–40</td><td class="num">16 × 12</td><td class="num">15.5 × 11</td><td><span class="swatch" style="background:#d9e7ef"></span>Azul cielo</td></tr>
+        <tr><td>Consultorio 1</td><td class="num">30–38 / 28–40</td><td class="num">8 × 12</td><td class="num">7.5 × 11</td><td><span class="swatch" style="background:#e6f1e0"></span>Verde menta</td></tr>
+        <tr><td>Consultorio 2</td><td class="num">38–46 / 28–40</td><td class="num">8 × 12</td><td class="num">7.7 × 11</td><td><span class="swatch" style="background:#e6f1e0"></span>Verde menta</td></tr>
+        <tr><td>Pasillo</td><td class="num">6–46 / 23–28</td><td class="num">40 × 5</td><td class="num">39.5 × 5</td><td><span class="swatch" style="background:#ecebe6"></span>Gris perla</td></tr>
+        <tr><td>Baño mujeres</td><td class="num">6–10 / 10–23</td><td class="num">4 × 13</td><td class="num">3.2 × 12</td><td><span class="swatch" style="background:#cfe6f2"></span>Azul (cuadritos)</td></tr>
+        <tr><td>Baño hombres</td><td class="num">10–14 / 10–23</td><td class="num">4 × 13</td><td class="num">3.5 × 12</td><td><span class="swatch" style="background:#cfe6f2"></span>Azul (cuadritos)</td></tr>
+        <tr><td>Habitación 1</td><td class="num">14–24 / 10–23</td><td class="num">10 × 13</td><td class="num">9.5 × 12</td><td><span class="swatch" style="background:#f1e6d6"></span>Madera clara</td></tr>
+        <tr><td>Habitación 2</td><td class="num">24–34 / 10–23</td><td class="num">10 × 13</td><td class="num">9.5 × 12</td><td><span class="swatch" style="background:#f1e6d6"></span>Madera clara</td></tr>
+        <tr><td>Enfermería</td><td class="num">34–46 / 10–23</td><td class="num">12 × 13</td><td class="num">11.7 × 12</td><td><span class="swatch" style="background:#f6dfe3"></span>Rosa pálido</td></tr>
+        <tr><td>Urgencias</td><td class="num">46–56 / 10–40</td><td class="num">10 × 30</td><td class="num">9 × 29</td><td><span class="swatch" style="background:#f6e0dc"></span>Salmón</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Puertas y ventanas</h3>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Elemento</th><th>Ancho × alto</th><th>Desde el piso</th></tr></thead>
+          <tbody>
+            <tr><td>Entrada de pacientes (doble)</td><td class="num">6 × 7</td><td class="num">0</td></tr>
+            <tr><td>Entrada de ambulancias (doble)</td><td class="num">6 × 7</td><td class="num">0</td></tr>
+            <tr><td>Puertas interiores</td><td class="num">3 × 7</td><td class="num">0</td></tr>
+            <tr><td>Puertas de baños</td><td class="num">2.5 × 7</td><td class="num">0</td></tr>
+            <tr><td>Arco recepción–pasillo</td><td class="num">8 × 8</td><td class="num">0</td></tr>
+            <tr><td>Ventana normal</td><td class="num">4 × 3</td><td class="num">4 (repisa)</td></tr>
+            <tr><td>Ventanas junto a la entrada</td><td class="num">3 × 3</td><td class="num">4</td></tr>
+            <tr><td>Ventana de baño</td><td class="num">2 × 1.5</td><td class="num">7</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <h3>Alturas</h3>
+        <ul>
+          <li>Muros exteriores e interiores: <b>10 cm</b>.</li>
+          <li>Grosor de muros: <b>0.5 cm</b>.</li>
+          <li>Techo: 2 tapas de <b>25.5 × 31 cm</b> (juntas miden 51 × 31, sobresalen 0.5 cm por lado).</li>
+          <li>Altura total con paneles solares: unos <b>13 cm</b>.</li>
+          <li>Árboles: <b>8 a 9 cm</b> de alto. Postes de señales: <b>5 cm</b>.</li>
+        </ul>
+        <div class="note warn"><b>Ojo</b><span>Las puertas miden 7 y los muros 10: siempre quedan 3 cm de "dintel" arriba de cada puerta. Nunca cortes la puerta hasta arriba o el muro se debilita.</span></div>
+      </div>
+    </div>
+
+    <h3>Piezas de muros y divisiones</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Pieza</th><th>Cant.</th><th>Largo × alto</th><th>Dónde va</th><th>Huecos que lleva</th></tr></thead>
+      <tbody>
+        <tr><td>A · Fachada principal</td><td class="num">1</td><td class="num">50 × 10</td><td>Frente, y = 40</td><td>1 puerta doble, 6 ventanas</td></tr>
+        <tr><td>B · Muro trasero</td><td class="num">1</td><td class="num">50 × 10</td><td>Fondo, y = 10</td><td>6 ventanas (2 de baño)</td></tr>
+        <tr><td>C · Muro izquierdo</td><td class="num">1</td><td class="num">29 × 10</td><td>x = 6, entre A y B</td><td>3 ventanas (1 de baño)</td></tr>
+        <tr><td>D · Muro derecho</td><td class="num">1</td><td class="num">29 × 10</td><td>x = 56, entre A y B</td><td>Puerta de ambulancias, 2 ventanas</td></tr>
+        <tr><td>E · Pasillo lado frente</td><td class="num">1</td><td class="num">39.5 × 10</td><td>y = 28, de x 6.5 a 46</td><td>3 puertas, 1 arco</td></tr>
+        <tr><td>F · Pasillo lado fondo</td><td class="num">1</td><td class="num">39.5 × 10</td><td>y = 23, de x 6.5 a 46</td><td>5 puertas</td></tr>
+        <tr><td>G · Muro de urgencias</td><td class="num">1</td><td class="num">29 × 10</td><td>x = 46</td><td>1 puerta</td></tr>
+        <tr><td>H · Divisiones del frente</td><td class="num">3</td><td class="num">11 × 10</td><td>x = 14, 30 y 38</td><td>Ninguno</td></tr>
+        <tr><td>I · Divisiones del fondo</td><td class="num">4</td><td class="num">12 × 10</td><td>x = 10, 14, 24 y 34</td><td>Ninguno</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">Total: 15 piezas, unos 350 cm de tira de 10 cm de alto. Caben en dos hojas de cartón pluma de 50 × 70 (7 tiras de 10 × 50 por hoja). En la sección 3 tienes la plantilla de cada muro con la posición exacta de sus huecos.</p>
+
+    <h3>Muebles</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Mueble</th><th>Cant.</th><th>Largo × ancho × alto</th><th>Dónde</th><th>Material principal</th></tr></thead>
+      <tbody>
+        <tr><td>Cama de hospital</td><td class="num">4</td><td class="num">6.5 × 3 × 2 (cabecera 3.5)</td><td>Habitaciones 1 y 2</td><td>Cartón pluma + foami blanco</td></tr>
+        <tr><td>Buró</td><td class="num">2</td><td class="num">1.5 × 1.5 × 2</td><td>Entre las 2 camas de cada habitación</td><td>Cubo de cartón pluma</td></tr>
+        <tr><td>Sillón de visitas</td><td class="num">2</td><td class="num">1.5 × 1.5 × 2</td><td>Habitaciones 1 y 2</td><td>Foami verde</td></tr>
+        <tr><td>Camilla</td><td class="num">5</td><td class="num">6 × 2.5 × 3</td><td>2 consultorios + 3 en urgencias</td><td>Abatelenguas + 4 patas de palillo</td></tr>
+        <tr><td>Escritorio</td><td class="num">3</td><td class="num">4 × 2 × 2.5</td><td>Consultorios y enfermería</td><td>Abatelenguas + cartón</td></tr>
+        <tr><td>Silla</td><td class="num">8</td><td class="num">1.2 × 1.2 × 2.8 (asiento a 1.5)</td><td>Escritorios y recepción</td><td>Palitos de paleta cortados</td></tr>
+        <tr><td>Banca de espera (3 asientos)</td><td class="num">2</td><td class="num">5 × 1.3 × 2.8</td><td>Sala de espera</td><td>Foami azul + palitos</td></tr>
+        <tr><td>Mostrador de recepción</td><td class="num">1</td><td class="num">6 × 2 × 3</td><td>Recepción</td><td>Cartón pluma forrado</td></tr>
+        <tr><td>Mostrador de farmacia</td><td class="num">1</td><td class="num">4 × 1.5 × 3</td><td>Farmacia</td><td>Cartón pluma</td></tr>
+        <tr><td>Anaquel de medicinas</td><td class="num">2</td><td class="num">6 × 1.5 × 6</td><td>Farmacia y enfermería</td><td>Cartón + 3 repisas</td></tr>
+        <tr><td>Mesa de enfermería</td><td class="num">1</td><td class="num">5 × 2.5 × 2.5</td><td>Enfermería</td><td>Cartón pluma</td></tr>
+        <tr><td>Inodoro y lavabo</td><td class="num">2 + 2</td><td class="num">1.2 × 2 × 1.5 · 1.5 × 1 × 2</td><td>Baños</td><td>Foami blanco, tapitas</td></tr>
+        <tr><td>Biombo / cortina</td><td class="num">3</td><td class="num">5 × 3.5 de alto</td><td>Urgencias y habitación</td><td>Tela o papel china celeste</td></tr>
+        <tr><td>Silla de ruedas y carrito rojo</td><td class="num">1 + 1</td><td class="num">1.5 × 1.5 × 2</td><td>Urgencias</td><td>Botones, alambre, foami</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<style>
+.dg text{font-family:var(--f-mono);font-size:11px;fill:var(--plan-ink)}
+.dg .t-b{font-family:var(--f-display);font-weight:700;font-size:12px}
+.dg .ink{stroke:var(--plan-ink);fill:none;stroke-width:1.5}
+.dg .f-sun{fill:#1d3f73}.dg .f-sun2{fill:#6c8fc7}
+.dg .f-water{fill:#4fa8d6}.dg .s-water{stroke:#1f86b8;fill:none;stroke-width:3}
+.dg .f-wall{fill:#e9e4da;stroke:var(--plan-ink);stroke-width:1}
+.dg .f-roof{fill:#bfbab0}
+.dg .f-black{fill:#2b2b2b}.dg .f-gravel{fill:#9c9286}.dg .f-felt{fill:#d8cfb8}.dg .f-soil{fill:#6b4a2f}.dg .f-grass{fill:#5c9a3a}
+.dg .f-sunc{fill:#f2b632}.dg .s-arrow{stroke:#c2372c;stroke-width:2;fill:none;marker-end:url(#arr)}
+.dg .f-arrow{fill:#c2372c}
+.dg .f-paper{fill:var(--plan-bg)}
+</style>
+
+<section class="block" id="planos">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 3</span>
+      <h2>Planos</h2>
+      <p class="prose muted">Todos los planos se dibujan con las mismas medidas de la sección 2. Cada cuadro de la cuadrícula mide 5 cm. Si estás en el celular, desliza los planos hacia los lados.</p>
+    </div>
+
+    <figure class="plan">
+      <figcaption><b>Plano general visto desde arriba</b> · base de 80 × 60 cm con calle, banqueta, estacionamiento, jardines y ecotecnologías.</figcaption>
+      <div class="svgbox" id="sitePlan"></div>
+    </figure>
+
+    <figure class="plan">
+      <figcaption><b>Plano de distribución de habitaciones</b> · hospital de 50 × 30 cm con muebles. Las líneas gruesas son muros; los huecos son puertas y ventanas.</figcaption>
+      <div class="svgbox" id="floorPlan"></div>
+    </figure>
+
+    <figure class="plan">
+      <figcaption><b>Vista frontal (fachada principal)</b> · como la verías parado en la calle.</figcaption>
+      <div class="svgbox" id="frontElev"></div>
+    </figure>
+
+    <figure class="plan">
+      <figcaption><b>Vista lateral derecha</b> · entrada de ambulancias, marquesina y sistema de agua de lluvia.</figcaption>
+      <div class="svgbox" id="sideElev"></div>
+    </figure>
+
+    <figure class="plan">
+      <figcaption><b>Vista del interior (corte A–A)</b> · imagina que cortas el hospital por el pasillo y miras hacia el fondo: baños, habitaciones, enfermería y urgencias con sus muebles. Para verlo en 3D usa el visor con "Techo: Quitado" y "Vista: Interior".</figcaption>
+      <div class="svgbox" id="sectionView"></div>
+    </figure>
+
+    <figure class="plan">
+      <figcaption><b>Plantillas de muros</b> · dibuja cada pieza así sobre el cartón pluma. Los números de abajo son centímetros medidos desde el extremo marcado con ◀; cada pieza dice a qué muro o lado va ese extremo. Encima de cada hueco está su ancho × alto.</figcaption>
+      <div class="svgbox" id="wallTemplates"></div>
+    </figure>
+  </div>
+</section>
+
+<section class="block" id="eco">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 4</span>
+      <h2>Las tres ecotecnologías</h2>
+      <p class="prose muted">Elegimos las tres que más sentido tienen en un hospital real, que trabaja las 24 horas: <b>paneles solares</b> (gasta mucha electricidad), <b>captación de agua de lluvia</b> (gasta mucha agua) y <b>azotea verde</b> (necesita espacios frescos y tranquilos para los pacientes). Además, las tres trabajan juntas: el agua que sobra de la azotea verde llega a la canaleta y a la cisterna.</p>
+    </div>
+
+    <div class="grid3">
+      <article class="card eco-card sun">
+        <span class="eyebrow" style="color:var(--sun)">Ecotecnología 1</span>
+        <h3>Paneles solares</h3>
+        <svg class="dg" viewBox="0 0 320 170" role="img" aria-label="Diagrama: el sol ilumina los paneles, la electricidad pasa al inversor y luego al hospital">
+          <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-arrow"/></marker></defs>
+          <circle cx="36" cy="32" r="18" class="f-sunc"/>
+          <path d="M60 40 L110 62" class="s-arrow"/>
+          <rect x="40" y="100" width="190" height="50" class="f-wall"/>
+          <rect x="36" y="94" width="198" height="6" class="f-roof"/>
+          <g transform="translate(110,92) rotate(-20)"><rect width="60" height="10" class="f-sun"/><path d="M15 0V10M30 0V10M45 0V10" stroke="#9fb7de" stroke-width="1"/></g>
+          <g transform="translate(170,92) rotate(-20)"><rect width="50" height="10" class="f-sun"/><path d="M12 0V10M25 0V10M37 0V10" stroke="#9fb7de" stroke-width="1"/></g>
+          <path d="M232 98 C262 98 262 112 262 118" class="s-arrow"/>
+          <rect x="250" y="120" width="26" height="30" rx="3" style="fill:#8a9097"/>
+          <text x="244" y="164">inversor</text>
+          <text x="120" y="130" class="t-b">hospital</text>
+          <text x="96" y="58">luz → electricidad</text>
+        </svg>
+        <dl>
+          <dt>Qué es</dt><dd>Placas que convierten la luz del sol en electricidad sin hacer ruido ni humo.</dd>
+          <dt>Cómo funciona</dt><dd>Las celdas de silicio reciben la luz y producen corriente directa. Un aparato llamado <b>inversor</b> la cambia a corriente alterna, la que usan los contactos y las lámparas. Lo que sobra se manda a la red eléctrica o se guarda en baterías.</dd>
+          <dt>Beneficio ambiental</dt><dd>Reduce la quema de gas, carbón y petróleo en las centrales eléctricas, y con eso las emisiones de CO₂ que calientan el planeta. Es energía limpia y renovable.</dd>
+          <dt>Uso en el hospital</dt><dd>Iluminación de pasillos y habitaciones, refrigeradores de vacunas y medicinas, y respaldo con baterías para equipos importantes durante un apagón.</dd>
+          <dt>Dónde va en la maqueta</dt><dd>Mitad <b>derecha</b> del techo (x 31 a 56.5): 6 paneles de 6 × 4 cm en 2 filas de 3, inclinados hacia la calle. El inversor es una cajita gris pegada al muro trasero, cerca de la esquina derecha, unida con un cable negro.</dd>
+          <dt>Materiales</dt><dd>6 rectángulos de cartón pluma de 6 × 4, cartulina azul marino, marcador plateado, 6 tiras de soporte de 6 × 1.5, estambre negro (30 cm), cajita de 2 × 1.5 × 3.</dd>
+        </dl>
+      </article>
+
+      <article class="card eco-card water">
+        <span class="eyebrow" style="color:var(--water)">Ecotecnología 2</span>
+        <h3>Captación de agua de lluvia</h3>
+        <svg class="dg" viewBox="0 0 320 170" role="img" aria-label="Diagrama: la lluvia cae al techo, baja por la canaleta y el bajante al filtro y la cisterna, y de ahí a los baños y al riego">
+          <g class="f-water"><rect x="60" y="8" width="2" height="12"/><rect x="90" y="14" width="2" height="12"/><rect x="120" y="6" width="2" height="12"/><rect x="150" y="12" width="2" height="12"/></g>
+          <rect x="30" y="60" width="150" height="90" class="f-wall"/>
+          <path d="M26 52 L184 60 L184 64 L26 56 z" class="f-roof"/>
+          <rect x="182" y="58" width="12" height="7" style="fill:#7d8790"/>
+          <path d="M190 64 V128 H218" class="s-water"/>
+          <rect x="214" y="118" width="14" height="10" style="fill:#7d8790"/>
+          <rect x="232" y="104" width="54" height="46" rx="6" style="fill:#d7e9f3;stroke:#1f86b8;stroke-width:2"/>
+          <rect x="234" y="122" width="50" height="26" rx="4" class="f-water"/>
+          <path d="M232 144 H60 V120" class="s-water" style="stroke-dasharray:6 4"/>
+          <text x="236" y="98">cisterna</text>
+          <text x="196" y="112">filtro</text>
+          <text x="196" y="80">bajante</text>
+          <text x="40" y="112">a inodoros</text>
+          <text x="40" y="164">y riego</text>
+          <text x="200" y="50">canaleta</text>
+        </svg>
+        <dl>
+          <dt>Qué es</dt><dd>Un sistema que recoge el agua de lluvia que cae en el techo, la limpia un poco y la guarda en una cisterna para usarla después.</dd>
+          <dt>Cómo funciona</dt><dd>El techo tiene una ligera inclinación. La lluvia escurre a una <b>canaleta</b>, baja por un tubo llamado <b>bajante</b>, pasa por un <b>filtro</b> que detiene hojas y tierra, y llega a la <b>cisterna</b>. Una bomba la manda a los inodoros y a las llaves de riego.</dd>
+          <dt>Beneficio ambiental</dt><dd>Ahorra agua potable, que es escasa en muchas ciudades de México, y reduce encharcamientos en la calle porque el agua no se va directo al drenaje.</dd>
+          <dt>Uso en el hospital</dt><dd>Descargas de inodoros, lavado de patios y estacionamiento, y riego de jardines y de la azotea verde. No se usa para beber ni para curar sin tratamiento especial.</dd>
+          <dt>Dónde va en la maqueta</dt><dd>Canaleta a lo largo del <b>muro trasero</b>, arriba (x 6 a 56). Bajante en la esquina trasera derecha. Filtro y cisterna en el jardín trasero (centro en x 52, y 4). Un tubo azul corre por el jardín hasta los baños (x 9, y 10).</dd>
+          <dt>Materiales</dt><dd>Tira de cartulina gris de 51 × 2.2, popote grueso (11 cm), tapa de botella, tul o malla, envase chico de yogur (6 cm de diámetro), popote azul delgado (50 cm), pintura azul y pegamento blanco.</dd>
+        </dl>
+      </article>
+
+      <article class="card eco-card">
+        <span class="eyebrow" style="color:var(--eco)">Ecotecnología 3</span>
+        <h3>Azotea verde</h3>
+        <svg class="dg" viewBox="0 0 320 170" role="img" aria-label="Diagrama de capas de la azotea verde: losa, impermeabilizante, drenaje, filtro, sustrato y plantas">
+          <rect x="20" y="140" width="200" height="18" class="f-roof"/>
+          <rect x="20" y="132" width="200" height="8" class="f-black"/>
+          <rect x="20" y="118" width="200" height="14" class="f-gravel"/>
+          <rect x="20" y="113" width="200" height="5" class="f-felt"/>
+          <rect x="20" y="95" width="200" height="18" class="f-soil"/>
+          <g class="f-grass"><path d="M30 95 q6 -26 10 0z M50 95 q8 -34 14 0z M76 95 q4 -20 9 0z M96 95 q10 -40 16 0z M126 95 q5 -24 10 0z M148 95 q9 -30 14 0z M174 95 q6 -22 10 0z M196 95 q8 -32 14 0z"/></g>
+          <g><text x="228" y="80">plantas</text><text x="228" y="106">sustrato</text><text x="228" y="118">filtro</text><text x="228" y="130">drenaje</text><text x="228" y="140">impermeable</text><text x="228" y="156">losa</text></g>
+        </svg>
+        <dl>
+          <dt>Qué es</dt><dd>Un techo cubierto de plantas, sembradas sobre capas que protegen la losa del agua y de las raíces.</dd>
+          <dt>Cómo funciona</dt><dd>De abajo hacia arriba: losa, <b>impermeabilizante</b>, capa de <b>drenaje</b> (grava o tezontle), tela <b>filtro</b>, <b>sustrato</b> (tierra ligera) y plantas resistentes como suculentas y pastos. Las plantas absorben agua y sol; el agua que sobra se va por el drenaje hacia la canaleta.</dd>
+          <dt>Beneficio ambiental</dt><dd>Mantiene el edificio más fresco, así se usa menos aire acondicionado. Absorbe CO₂ y polvo, retiene agua de lluvia y da casa a abejas y mariposas.</dd>
+          <dt>Uso en el hospital</dt><dd>Habitaciones más frescas debajo del techo y un jardín tranquilo donde pacientes y personal pueden descansar. Estar cerca de plantas ayuda a la recuperación.</dd>
+          <dt>Dónde va en la maqueta</dt><dd>Mitad <b>izquierda</b> del techo (x 5.5 a 31), sobre farmacia, recepción, baños y habitaciones. En la esquina delantera izquierda dejas un <b>corte de capas</b> de 5 × 5 cm para explicar cómo está hecha.</dd>
+          <dt>Materiales</dt><dd>Pasto artificial de 24 × 29, cartulina negra, piedritas o grava de pecera, fieltro o franela beige, aserrín pintado de café, esponja verde, flores de foami, 4 tiras de borde de 1 cm de alto, palitos para un andador y 2 bancas.</dd>
+        </dl>
+      </article>
+    </div>
+    <div class="note tip"><b>Cómo explicarlo frente al grupo</b><span>"El sol de la azotea genera la electricidad del hospital; la lluvia que cae en el techo se junta en la canaleta, se guarda en la cisterna y sirve para los baños y para regar; y la azotea verde enfría el edificio y deja pasar el agua sobrante hacia la cisterna. Las tres juntas reducen el consumo de luz, de agua potable y la temperatura."</span></div>
+    <p class="muted">Las instrucciones paso a paso de cada ecotecnología están en la <a href="#etapa-9">Etapa 9</a>.</p>
+  </div>
+</section>
+
+<section class="block" id="materiales">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 5</span>
+      <h2>Lista completa de materiales y presupuesto</h2>
+      <p class="prose muted">Precios aproximados de papelería y tlapalería en México (2026). Pueden variar según tu ciudad. <span class="tag must">Indispensable</span> significa que sí lo necesitas; <span class="tag swap">Sustituible</span> indica con qué lo puedes cambiar para ahorrar.</p>
+    </div>
+    <div class="tbl-wrap"><table id="matTable">
+      <thead><tr><th>Material</th><th>Cantidad</th><th>Para qué sirve</th><th>Tipo</th><th>Costo MXN</th></tr></thead>
+      <tbody></tbody>
+      <tfoot><tr><td colspan="4">Total aproximado</td><td class="num" id="matTotal"></td></tr></tfoot>
+    </table></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Materiales reciclados (gratis)</h3>
+        <ul>
+          <li><b>Caja de cartón grande</b>: refuerzo de la base (80 × 60).</li>
+          <li><b>Envase chico de yogur</b> (6 cm de diámetro): la cisterna.</li>
+          <li><b>Tapas de botella</b>: filtro de lluvia, lavabos, macetas.</li>
+          <li><b>Cajas de cerillos</b>: burós o anaqueles rápidos.</li>
+          <li><b>Retazos de tela</b> o calcetín viejo: sábanas, cobijas y cortinas.</li>
+          <li><b>Botones</b>: llantas de silla de ruedas y carrito.</li>
+          <li><b>Carritos de juguete</b> (tamaño Hot Wheels): autos y ambulancia.</li>
+          <li><b>Ramitas secas</b>: troncos de árboles más naturales.</li>
+          <li><b>Hojas de revista</b>: cuadros, carteles y pantallas de TV.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Versión ahorro (unos $850)</h3>
+        <ul>
+          <li>Base con <b>dos capas de caja de cartón</b> pegadas en cruz en vez de cartón pluma de 70 × 100: ahorras $110.</li>
+          <li>Solo <b>silicón frío</b> si no tienes pistola: ahorras $70 (tarda más en secar).</li>
+          <li>Compra solo pintura <b>blanca, gris y verde</b>; los detalles con plumones: ahorras $80.</li>
+          <li><b>Aserrín pintado de verde</b> en lugar de pasto artificial: ahorras $25.</li>
+          <li>Usa las tijeras, lápiz, regla y escuadra que ya tengas.</li>
+        </ul>
+        <div class="note warn"><b>No ahorres en esto</b><span>El cartón pluma para los muros, el cúter con navaja nueva y la regla metálica. Son lo que hace que la maqueta se vea recta y bien hecha.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="plan-trabajo">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 6</span>
+      <h2>Organización del trabajo</h2>
+      <p class="prose muted">Siete sesiones de unas 2 horas. No trates de hacer todo en un día: el pegamento necesita secar y tú vas a trabajar mejor descansado.</p>
+    </div>
+    <div class="timeline">
+      <div class="day"><b>Sesión 1</b><span>Comprar materiales. Etapa 1 (base) y Etapa 2 (trazo).</span></div>
+      <div class="day"><b>Sesión 2</b><span>Etapa 3: cortar y pegar los 4 muros exteriores.</span></div>
+      <div class="day"><b>Sesión 3</b><span>Etapa 4 (divisiones) y Etapa 5 (puertas y ventanas).</span></div>
+      <div class="day"><b>Sesión 4</b><span>Etapa 6 (pisos y techo) y empezar los muebles.</span></div>
+      <div class="day"><b>Sesión 5</b><span>Etapa 7 (muebles) y Etapa 8 (decoración interior).</span></div>
+      <div class="day"><b>Sesión 6</b><span>Etapa 9: las tres ecotecnologías.</span></div>
+      <div class="day"><b>Sesión 7</b><span>Etapa 10 (calles y jardines) y Etapa 11 (acabados). Ensayar la exposición.</span></div>
+    </div>
+    <div class="grid3">
+      <div class="note tip"><b>Antes de cada etapa</b><span>Lee la etapa completa, junta sus materiales en la mesa y revisa el plano. Después empieza a cortar.</span></div>
+      <div class="note tip"><b>Marca tus piezas</b><span>Escribe con lápiz la letra de cada muro (A, B, C…) en la cara que irá hacia dentro. Así nunca te confundes.</span></div>
+      <div class="note tip"><b>Lugar de trabajo</b><span>Una mesa firme, buena luz y un cartón viejo debajo para cortar. Guarda las piezas pequeñas en un recipiente.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="construccion">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 7</span>
+      <h2>Construcción paso a paso</h2>
+      <p class="prose muted">Cada etapa tiene los mismos 7 apartados. El botón <b>Ver en 3D</b> sube al visor y muestra cómo debe ir tu maqueta; <b>Escuchar</b> lee en voz alta el guion de la etapa.</p>
+    </div>
+
+    <article class="stage" id="etapa-1" data-stage="1">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 1</span><h3>Preparación y construcción de la base</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Una base firme de 80 × 60 cm que no se doble. Sobre ella irá todo: hospital, calle, estacionamiento y jardines.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Cartón pluma de 70 × 100 (o 2 capas de caja de cartón).</li><li>Caja de cartón para el refuerzo.</li><li>Resistol 850, cúter, regla metálica, escuadra, lápiz.</li><li>Cinta masking, 4 libros pesados.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><p>Base final: <b>80 × 60 cm</b>. Refuerzo: <b>80 × 60 cm</b> de cartón corrugado.</p><p>Si tu cartón pluma mide 70 × 100, tendrás que unir: corta un rectángulo de 70 × 60 y una tira de 10 × 60, y únelas con masking por abajo.</p></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>Cartón pluma: 70 × 60 cm.</li><li>Cartón pluma: 10 × 60 cm, sacada del sobrante de 70 × 40.</li><li>Cartón corrugado: 80 × 60 cm.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo unir</h4><ol><li>Marca las medidas con lápiz y escuadra, revisando que las esquinas formen un ángulo recto.</li><li>Corta con la regla metálica encima de la línea, dando 3 o 4 pasadas suaves con el cúter, no una sola fuerte.</li><li>Une las dos piezas de cartón pluma con cinta masking por la parte de abajo.</li><li>Unta Resistol en zigzag sobre el cartón corrugado y pega encima el cartón pluma, con la canaleta del corrugado en dirección contraria a la unión.</li><li>Pon libros encima y deja secar 2 horas.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Una tabla plana, sin bordes levantados, que no se dobla al cargarla de una esquina.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Cortar sin regla: los bordes quedan chuecos.</li><li>Poner demasiado Resistol: el cartón se ondula.</li><li>Cortar sobre la mesa sin protegerla.</li></ul></div>
+      </div>
+      <div class="note warn"><b>Seguridad</b><span>Corta siempre alejando el cúter de tu cuerpo y con la mano que sostiene la regla del lado contrario a la navaja. Cierra el cúter cada vez que lo sueltes.</span></div>
+    </article>
+
+    <article class="stage" id="etapa-2" data-stage="2">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 2</span><h3>Dibujo de la distribución sobre la base</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>El "mapa" de todo el proyecto dibujado a lápiz sobre la base: zonas exteriores, contorno del hospital y línea de cada muro.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Lápiz HB, goma, regla de 50 cm, escuadra.</li><li>El plano general y el plano de distribución (sección 3).</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>Hospital: rectángulo de x 6 a 56 y de y 10 a 40.</li><li>Calle: y 50 a 60. Banqueta: y 46 a 50.</li><li>Carril: x 57 a 65. Estacionamiento: x 65 a 80, y 6 a 46.</li><li>Muros interiores en x = 10, 14, 24, 30, 34, 38, 46 y en y = 23 y 28.</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><p>Ninguna. Solo dibujo.</p></div>
+        <div class="step"><h4><span>5</span>Cómo hacerlo</h4><ol><li>Pon la base con el lado largo frente a ti. La esquina de atrás a la izquierda es el punto (0, 0).</li><li>Marca puntitos cada 5 cm en los 4 bordes y únelos para hacer una cuadrícula muy suave (te ayudará en todo).</li><li>Dibuja el rectángulo del hospital.</li><li>Dibuja la calle, la banqueta, el carril, los 5 cajones de 8 cm y los jardines.</li><li>Dentro del hospital, traza cada muro interior y escribe el nombre de cada cuarto.</li><li>Marca con una X el lugar de la cisterna (x 52, y 4) y los 9 árboles.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Igual al plano general, con todo rotulado. Al mirarlo debes saber dónde va cada cosa.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Medir cada línea desde la anterior: los errores se suman. Mide siempre desde el borde de la base.</li><li>Apretar el lápiz: luego no se borra.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-3" data-stage="3">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 3</span><h3>Corte y construcción de las paredes exteriores</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Los 4 muros de fuera (A, B, C y D) con sus huecos de puertas y ventanas ya cortados.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>1 hoja de cartón pluma 50 × 70.</li><li>Cúter con navaja nueva, regla metálica, escuadra, lápiz.</li><li>Silicón frío o caliente, alfileres, cinta masking.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>A y B: 50 × 10.</li><li>C y D: 29 × 10.</li><li>Ventanas 4 × 3 con la parte de abajo a 4 cm del piso.</li><li>Puertas dobles 6 × 7.</li></ul><p>Posición exacta de cada hueco: ver "Plantillas de muros".</p></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>Corta 4 tiras de 10 × 50 a lo largo de la hoja.</li><li>Dos tiras quedan como A y B. De las otras dos corta C y D de 29 cm (guarda los sobrantes de 21 × 10).</li><li>Dibuja los huecos en cada pieza con la plantilla.</li><li>Corta primero los lados verticales de cada hueco y luego los horizontales. Saca el cuadrito empujando suave.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo unir</h4><ol><li>Pon cordón de silicón en el canto de abajo del muro B y pégalo sobre la línea trasera.</li><li>Pega C a la izquierda, metido entre A y B. Pon silicón en el canto de abajo y en el canto que toca a B.</li><li>Pega D a la derecha, igual.</li><li>Cierra con A al frente.</li><li>Revisa con la escuadra que cada esquina tenga 90°. Sujeta con alfileres o masking mientras seca (30 min con silicón frío).</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Una "caja" sin tapa de 50 × 30 × 10, firme, con las esquinas rectas y todos los huecos limpios.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Cortar las ventanas después de pegar los muros: se rompen.</li><li>Usar navaja sin filo: deshace la espuma del cartón.</li><li>Poner el silicón caliente muy cerca del borde: derrite la espuma. Mejor silicón frío en muros.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-4" data-stage="4">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 4</span><h3>Construcción de las divisiones interiores</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Los muros de dentro que forman el pasillo y los cuartos: E, F, G, 3 piezas H y 4 piezas I.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>1 hoja de cartón pluma 50 × 70 y los sobrantes de la etapa 3.</li><li>Cúter, regla, escuadra, silicón frío, alfileres.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>E y F (pasillo): 39.5 × 10.</li><li>G (urgencias): 29 × 10.</li><li>H (frente): 11 × 10, 3 piezas.</li><li>I (fondo): 12 × 10, 4 piezas.</li><li>Puertas 3 × 7; baños 2.5 × 7; arco 8 × 8.</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>Corta tiras de 10 cm de alto.</li><li>Corta E, F y G, y marca sus puertas con la plantilla.</li><li>Corta las 3 piezas H y las 4 piezas I de los sobrantes.</li><li>Antes de cortar H e I, mide el hueco real en tu maqueta.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo unir (en este orden)</h4><ol><li>G primero, sobre la línea x = 46, de muro A a muro B.</li><li>E sobre y = 28 y F sobre y = 23, desde el muro C hasta G.</li><li>Las 3 H entre E y la fachada (x = 14, 30, 38).</li><li>Las 4 I entre F y el muro trasero (x = 10, 14, 24, 34).</li><li>Cada pieza lleva silicón abajo y en los cantos que tocan otro muro.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Desde arriba se ven 11 espacios y un pasillo de 5 cm que va de lado a lado hasta urgencias. Todas las divisiones a la misma altura que los muros exteriores, para que el techo apoye parejo.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Pegar E y F antes de G: no tendrás dónde apoyar sus extremos.</li><li>Divisiones más altas que 10 cm: el techo se balancea.</li><li>Olvidar la puerta de urgencias en G.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-5" data-stage="5">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 5</span><h3>Instalación de puertas y ventanas</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Vidrios de acetato en todas las ventanas, marcos y las hojas de las puertas.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Acetato (2 hojas carta).</li><li>Cartulina blanca para marcos, foami café o gris para puertas.</li><li>Resistol, tijeras, palillos de dientes, marcador plateado.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>Vidrio: 1 cm más grande que el hueco (5 × 4 para ventana de 4 × 3).</li><li>Marco: 4 tiras de 0.4 cm de ancho alrededor del hueco.</li><li>Hoja de puerta interior: 2.8 × 6.8. Puerta doble: 2 hojas de 2.9 × 6.8.</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>21 vidrios de acetato (17 ventanas + 4 hojas de puertas dobles de vidrio).</li><li>Tiras de marco de cartulina de 0.4 cm.</li><li>9 hojas de puertas interiores de foami.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo unir</h4><ol><li>Pon una línea muy delgada de Resistol alrededor del hueco por dentro.</li><li>Pega el acetato con un palillo, sin tocar el centro.</li><li>Por fuera, pega el marco de cartulina blanca.</li><li>Las puertas dobles de entrada y urgencias llevan acetato con un marco plateado: se ven como puertas de vidrio.</li><li>Las puertas interiores se pegan "entreabiertas" a un lado del hueco, para que se pueda ver hacia dentro.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Ventanas brillantes y limpias, marcos parejos y puertas que parecen abiertas.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Pegar acetato con silicón caliente: se arruga y se empaña.</li><li>Dejar huellas: tómalo de las orillas.</li><li>Cerrar todas las puertas: tapan la vista del interior.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-6" data-stage="6">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 6</span><h3>Construcción de los pisos y techos</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Un piso de color en cada cuarto y las 2 tapas desmontables del techo.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Cartulina o foami de colores (ver tabla de habitaciones).</li><li>1 hoja de cartón pluma 50 × 70 para el techo.</li><li>Plumón fino para dibujar cuadritos en baños.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>Pisos: el espacio libre interior de cada cuarto menos 1 mm.</li><li>Tapa izquierda: 25.5 × 31 (de x 5.5 a 31).</li><li>Tapa derecha: 25.5 × 31 (de x 31 a 56.5).</li><li>Topes bajo cada tapa: tiras de 1 × 1 cm.</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>12 pisos (11 cuartos + pasillo).</li><li>2 tapas de techo de 25.5 × 31.</li><li>8 topes de 1 × 1 × 6 cm.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo unir</h4><ol><li>Mide cada cuarto y recorta su piso. Pruébalo antes de pegarlo.</li><li>Pégalo con Resistol untado en toda la superficie y alisa con la mano.</li><li>Pon una tapa sobre el hospital y marca por debajo, con lápiz, dónde quedan los muros.</li><li>Pega los topes por debajo, justo por dentro de los muros exteriores (2 por lado). Así la tapa no resbala pero se quita fácil.</li><li>Pinta las tapas de gris claro por arriba.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Cada cuarto con su color. Las dos tapas se ponen y se quitan sin forzarlas y juntas tapan todo el hospital, sobresaliendo 0.5 cm.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Pegar las tapas: ¡deben ser desmontables!</li><li>Topes encima de un muro interior: la tapa queda chueca.</li><li>Pisos muy justos que se arrugan en las esquinas.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-7" data-stage="7">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 7</span><h3>Fabricación de camas, escritorios, sillas, mostradores y demás muebles</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Todos los muebles de la tabla de la sección 2: 4 camas, 2 burós, 2 sillones, 5 camillas, 3 escritorios, 8 sillas, 2 bancas, 2 mostradores, 2 anaqueles, 1 mesa, inodoros, lavabos, biombos, silla de ruedas y carrito.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Sobrantes de cartón pluma, abatelenguas, palitos de paleta, palillos.</li><li>Foami blanco, azul, rojo, gris; tela o papel china.</li><li>Silicón caliente (rápido para piezas chicas), tijeras, cúter.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><p>Usa la tabla de muebles. Truco: una persona en esta escala mide unos 5.5 cm; un asiento queda a 1.5 cm del piso y una mesa a 2.5 cm.</p></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><p>Ver el taller de muebles de abajo: cada mueble tiene sus piezas.</p></div>
+        <div class="step"><h4><span>5</span>Cómo unir</h4><p>Siempre en este orden: base, patas, respaldo o cabecera, y al final el forro o color. Pinta antes de pegar las piezas chicas cuando sea posible.</p></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Muebles firmes que se paran derechos, del mismo estilo (blanco con detalles de color) y que caben en su cuarto dejando paso libre a la puerta.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Hacer muebles enormes: mide cada uno contra la tabla.</li><li>Patas de distinto largo: córtalas todas juntas, alineadas con regla.</li><li>Quemarte con el silicón: usa pinzas para sostener piezas chicas.</li></ul></div>
+      </div>
+
+      <h3>Taller de muebles</h3>
+      <div class="grid3">
+        <div class="card"><h4>Cama de hospital (4)</h4><ol><li>Base: cartón pluma de 6.5 × 3.</li><li>Patas: 4 cubitos de 1 × 1 × 1.5 (o tapas de pluma).</li><li>Cabecera: cartón de 3 × 3.5, pegada parada en un extremo; piecera de 3 × 2.5.</li><li>Colchón: foami blanco de 6 × 2.8.</li><li>Cobija: tela o foami azul de 4 × 3.4, doblada sobre los lados. Almohada: rollito de foami de 1.8 × 1.</li><li>Barandal: medio palillo pegado a un lado.</li></ol></div>
+        <div class="card"><h4>Buró (2) y sillón (2)</h4><ol><li>Buró: cubo de 1.5 × 1.5 × 2 hecho con 3 capas de cartón pluma pegadas, o una caja de cerillos cortada.</li><li>Sillón: cubo de foami verde de 1.5 × 1.5 × 1 con un respaldo de 1.5 × 1 pegado atrás.</li><li>Pinta de blanco y dibuja un cajón con plumón.</li><li>Arriba, una lámpara con media cabeza de alfiler o un vasito de foami.</li></ol></div>
+        <div class="card"><h4>Camilla (5)</h4><ol><li>Superficie: abatelenguas cortado a 6 cm (mide 1.8 de ancho; pega 2 cartulinas para llegar a 2.5).</li><li>Patas: 4 trozos de palillo de 3 cm, pegados en las esquinas por debajo.</li><li>Colchón: foami azul cielo de 6 × 2.5, con un "cojín" levantado en un extremo.</li><li>Rollo de papel: tira de papel blanco de 2 × 4 encima.</li></ol></div>
+        <div class="card"><h4>Escritorio (3)</h4><ol><li>Cubierta: abatelenguas de 4 cm + otro al lado (4 × 2 aprox.).</li><li>Laterales: 2 piezas de cartón de 2 × 2.3, paradas en los extremos.</li><li>Encima: computadora (cuadrito de foami negro de 1.2 × 0.9 sobre un palito) y hojas de papel.</li></ol></div>
+        <div class="card"><h4>Silla (8)</h4><ol><li>Asiento: palito de paleta de 1.2 × 1.2.</li><li>Respaldo: palito de 1.2 × 1.5, pegado parado detrás.</li><li>Patas: 4 palillos de 1.5 cm, o una sola base de foami de 1 × 1 × 1.5.</li><li>Pinta el asiento de azul o gris.</li></ol></div>
+        <div class="card"><h4>Banca de espera (2)</h4><ol><li>Asiento: abatelenguas de 5 cm, con foami azul de 5 × 1.3.</li><li>Respaldo: foami azul de 5 × 1.3, pegado inclinado.</li><li>Patas: 2 cubitos de cartón de 1 × 1.5. Dibuja con plumón la división de 3 asientos.</li></ol></div>
+        <div class="card"><h4>Mostrador de recepción</h4><ol><li>Frente: cartón pluma de 6 × 3; lado: 2 × 3 (forma una L).</li><li>Cubierta: tira de cartón de 6.5 × 1 un poco salida.</li><li>Forra el frente con foami verde azulado y escribe "INFORMES".</li><li>Detrás: una silla y una computadora.</li></ol></div>
+        <div class="card"><h4>Farmacia: mostrador y anaquel</h4><ol><li>Mostrador: bloque de 4 × 1.5 × 3 forrado de blanco con cruz verde.</li><li>Anaquel: espalda de cartón de 6 × 6, 2 lados de 1.5 × 6 y 3 repisas de 6 × 1.5.</li><li>Medicinas: cuadritos de foami de colores y cuentas pegadas en las repisas.</li></ol></div>
+        <div class="card"><h4>Enfermería</h4><ol><li>Mesa: cartón de 5 × 2.5 sobre 4 patas de 2.3 cm.</li><li>Vitrina: anaquel igual al de farmacia, con acetato al frente.</li><li>Carrito: cubito de 1.5 × 1 × 2 con 4 botones como llantas.</li></ol></div>
+        <div class="card"><h4>Baños</h4><ol><li>Inodoro: base de foami blanco de 1.2 × 1.5 enrollada, tanque de 1.2 × 0.6 × 1.5 detrás.</li><li>Lavabo: tapa blanca de botella pegada a un palito de 2 cm contra la pared.</li><li>Espejo: cuadrito de papel aluminio de 1.5 × 1.5.</li><li>Letrero en la puerta: "M" y "H".</li></ol></div>
+        <div class="card"><h4>Urgencias</h4><ol><li>3 camillas (iguales a las de consultorio).</li><li>Biombos: tela celeste de 5 × 3.5 pegada a 2 palillos.</li><li>Silla de ruedas: silla con 2 botones grandes a los lados.</li><li>Carrito rojo de emergencias: cubo de foami rojo de 1.5 × 1.5 × 2.</li><li>Mostrador de triage: bloque de 3.5 × 1.5 × 3.</li></ol></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-8" data-stage="8">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 8</span><h3>Colocación y decoración de las habitaciones</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Pegar cada mueble en su lugar y añadir los detalles que hacen que cada cuarto se reconozca.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Todos los muebles de la etapa 7.</li><li>Recortes de revista, papel de colores, plumones, plantas de esponja chicas.</li><li>Silicón, Resistol, pinzas.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas (dónde va cada mueble)</h4><ul><li>Habitaciones: camas con la cabecera contra el muro trasero, separadas 2 cm, buró entre ellas.</li><li>Consultorios: escritorio pegado a la fachada, camilla contra la división.</li><li>Recepción: mostrador a la izquierda (x 15 a 21), bancas a la derecha.</li><li>Deja libre 3 cm frente a cada puerta.</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ul><li>Cuadros de 1.5 × 1 (revista).</li><li>TV de sala de espera: foami negro 3 × 1.8.</li><li>Letreros de puerta de 1.5 × 0.6: "Consultorio 1", "Farmacia", etc.</li><li>Cortinas de 2 × 3.5 para habitaciones.</li></ul></div>
+        <div class="step"><h4><span>5</span>Cómo unir</h4><ol><li>Presenta (acomoda sin pegar) todos los muebles de un cuarto.</li><li>Toma una foto si te gusta cómo se ve.</li><li>Pega con una gota de silicón cada mueble.</li><li>Pega cuadros, TV y letreros en los muros con Resistol.</li><li>Añade una plantita en la recepción y en el pasillo.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Al quitar el techo, cualquier persona puede decir qué es cada cuarto sin leer los letreros.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Pegar muebles altos junto a las ventanas: tapan la vista.</li><li>Poner demasiados adornos: se ve amontonado.</li><li>Pegar antes de presentar todo el cuarto.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-9" data-stage="9">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 9</span><h3>Construcción e instalación de las tres ecotecnologías</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Los paneles solares en la tapa derecha, la azotea verde en la tapa izquierda y el sistema de agua de lluvia en el muro trasero y el jardín.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><p>Los de cada ecotecnología en la sección 4.</p></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>Paneles: 6 de 6 × 4, en 2 filas de 3: 1.5 cm entre columnas y 4 cm entre filas.</li><li>Azotea: pasto de 24 × 29, borde de 1 cm, corte de capas de 5 × 5.</li><li>Canaleta: 51 × 2.2 doblada en U (0.7 + 0.8 + 0.7). Bajante: 11 cm. Cisterna: 6 de diámetro, 7 de alto.</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>Paneles: 6 rectángulos de cartón pluma de 6 × 4 forrados con cartulina azul marino; 6 soportes de 6 × 1.5.</li><li>Azotea: 2 bordes de 25.5 × 1 y 2 de 30 × 1; cartulina negra de 24 × 29; pasto de 24 × 29 con una esquina de 5 × 5 recortada.</li><li>Agua: canaleta, bajante, codo, filtro (tapa + tul) y tubo azul de 50 cm.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo construir y unir</h4>
+          <p><b>A. Paneles solares</b></p>
+          <ol><li>Forra cada rectángulo con cartulina azul marino.</li><li>Con marcador plateado y regla, dibuja una cuadrícula: 3 líneas verticales y 2 horizontales (las celdas).</li><li>Pega un soporte de 6 × 1.5 acostado bajo el borde trasero: el panel queda inclinado hacia la calle.</li><li>Pega los 6 paneles en la tapa derecha, 2 filas de 3: columnas desde x 33.25, 40.75 y 48.25; filas desde y 16 y y 24. Los 4 cm entre filas evitan que una fila le haga sombra a la otra y sirven de pasillo de mantenimiento.</li><li>Une los paneles con estambre negro y baja el cable por el borde trasero hasta el inversor (cajita gris de 2 × 1.5 × 3) pegado al muro trasero cerca de la esquina derecha.</li></ol>
+          <p><b>B. Azotea verde</b></p>
+          <ol><li>Pega el borde de 1 cm alrededor de la tapa izquierda.</li><li>Pega la cartulina negra (capa impermeable) en todo el interior.</li><li>En la esquina delantera izquierda (5 × 5) arma el corte de capas en escalera: piedritas (drenaje), una tira de fieltro (filtro), aserrín café (sustrato) y un poco de pasto. Cada capa 1 cm más corta que la anterior, para que se vean todas.</li><li>Pega el pasto artificial en el resto.</li><li>Haz un andador de 2 cm de ancho con palitos de paleta de lado a lado, 2 bancas y macetas.</li><li>Agrega arbustos de esponja y flores de foami. Pon una etiqueta: "Azotea verde: capas".</li></ol>
+          <p><b>C. Captación de lluvia</b></p>
+          <ol><li>Dobla la tira de 51 × 2.2 en U y píntala de gris.</li><li>Pégala por fuera del muro trasero, con el borde de arriba a 10 cm, un poco más baja del lado derecho (pendiente).</li><li>Pega el popote grueso (bajante) en la esquina trasera derecha, de la canaleta hasta el suelo.</li><li>Haz el filtro con una tapa cubierta de tul y pégalo junto a la cisterna.</li><li>Cisterna: envase de yogur pintado de gris, tapa transparente o pegamento blanco teñido de azul como "agua". Pégalo con centro en x 52, y 4.</li><li>Tubo azul: de la cisterna por el jardín (y 4) hasta los baños (x 9) y súbelo al muro trasero. Letrero: "Agua de lluvia → baños y riego".</li></ol>
+        </div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Al ver la maqueta se entiende el recorrido completo: sol → paneles → inversor; lluvia → techo → canaleta → bajante → filtro → cisterna → baños y riego; azotea con capas visibles.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Paneles planos y sin cuadrícula: parecen rectángulos azules sin sentido.</li><li>Pegar la canaleta al techo: el techo ya no se podrá quitar. Va pegada al muro.</li><li>Poner tierra o grava suelta en toda la azotea: pesa y se cae. Solo en el corte de capas, bien pegada.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-10" data-stage="10">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 10</span><h3>Construcción de calles, banquetas, estacionamiento y jardines</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>Toda el área urbana: calle, banqueta, plaza de acceso, carril de ambulancias, estacionamiento, jardines, árboles y las 2 marquesinas.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Cartulina negra y gris (o pintura), pintura blanca y amarilla.</li><li>Pasto artificial o aserrín verde, esponja verde, palillos de brocheta.</li><li>Cartón pluma para marquesinas, carritos de juguete.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>Calle 80 × 10, línea central de 0.3 × 2 cada 2 cm.</li><li>Paso peatonal: 6 rayas blancas de 8 × 0.8 (de x 18 a 26), separadas 0.8.</li><li>Cajones: 8 × 15, líneas de 0.3.</li><li>Árboles: tronco de 5, copa de 4 de ancho.</li><li>Marquesinas: 8 × 10 (a 9 de alto) y 10 × 4 (a 8 de alto).</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>Calle (negra) 80 × 10; carril (negro) 8 × 36.</li><li>Banqueta (gris) 80 × 4 con un hueco de 8 cm en el carril; plaza 50 × 6; estacionamiento 15 × 40.</li><li>Jardines (verde): izquierdo 6 × 46, trasero 65 × 10 (sin el hueco de la cisterna), jardineras 8 × 3.</li><li>Marquesinas y 4 postes de palillo de brocheta.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo unir</h4><ol><li>Pega primero lo más grande: calle, banqueta, plaza, carril y estacionamiento.</li><li>Pinta las líneas blancas y amarillas con regla y pincel delgado (o tiras de cinta).</li><li>Pega el pasto de los jardines.</li><li>Árboles: pincha la copa de esponja en un palillo de 9 cm, pinta el tronco café, haz un hoyito en la base y pega con silicón. Coloca 9.</li><li>Marquesinas: pega los postes y luego la placa encima, sobre el muro. La de urgencias lleva franja roja.</li><li>Coloca la ambulancia bajo su marquesina y 2 o 3 autos en los cajones.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Una pequeña cuadra realista: la calle al frente, el carril de ambulancias directo a urgencias y jardines que rodean el hospital.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Árboles en el carril o frente a las puertas.</li><li>Líneas chuecas: siempre con regla.</li><li>Pasto con mucho Resistol: se ve manchado.</li></ul></div>
+      </div>
+    </article>
+
+    <article class="stage" id="etapa-11" data-stage="11">
+      <div class="stage-top"><div><span class="stage-num">ETAPA 11</span><h3>Pintura, detalles y acabados finales</h3></div><div class="row"><button type="button" class="go3d">Ver en 3D</button><button type="button" class="say">Escuchar</button></div></div>
+      <div class="stage-grid">
+        <div class="step"><h4><span>1</span>Qué vamos a construir</h4><p>El acabado que hace que la maqueta se vea profesional: pintura de fachada, letreros, señalamientos y la ficha explicativa.</p></div>
+        <div class="step"><h4><span>2</span>Materiales</h4><ul><li>Pintura blanca, verde azulado (mezcla verde + azul + blanco), roja.</li><li>Cartulina, palillos, plumones, impresiones de señales.</li></ul></div>
+        <div class="step"><h4><span>3</span>Medidas</h4><ul><li>Franja de color en la fachada: de 0 a 1.5 cm de alto (zoclo) y de 9.3 a 10 (remate).</li><li>Letrero "HOSPITAL": 8 × 1.4 sobre la entrada. "URGENCIAS": 8 × 1.2 en la marquesina.</li><li>Señales: placas de 1.5 × 1.5 en postes de 5 cm.</li></ul></div>
+        <div class="step"><h4><span>4</span>Piezas a cortar</h4><ol><li>Letreros "HOSPITAL" y "URGENCIAS".</li><li>Señales: H, E, ambulancia, discapacidad, flecha y "No estacionarse".</li><li>Ficha explicativa de 15 × 10 con las 3 ecotecnologías.</li></ol></div>
+        <div class="step"><h4><span>5</span>Cómo hacerlo</h4><ol><li>Por fuera, pinta los muros de blanco (2 capas delgadas). Deja secar.</li><li>Pinta el zoclo y el remate verde azulado con cinta masking como guía.</li><li>Pega los letreros y las señales en sus postes: H en la banqueta izquierda, E y "Ambulancias" en la entrada del carril.</li><li>Pinta el símbolo de discapacidad azul en el cajón más cercano a la calle.</li><li>Limpia polvo y restos de pegamento con un pincel seco.</li><li>Pega la ficha explicativa en la esquina delantera derecha de la base.</li></ol></div>
+        <div class="step"><h4><span>6</span>Cómo debe quedar</h4><p>Como en la vista 3D en la etapa 11: limpia, con colores parejos y señalamientos que guían a pacientes y ambulancias.</p></div>
+        <div class="step"><h4><span>7</span>Errores a evitar</h4><ul><li>Pintar el cartón pluma con mucha agua: se pandea.</li><li>Pintar después de pegar ventanas sin proteger el acetato.</li><li>Letreros escritos a mano chuecos: imprímelos o usa regla.</li></ul></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="block" id="guion">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Sección 8</span>
+      <h2>Guion narrado del tutorial</h2>
+      <p class="prose muted">Este es el texto que lee la voz del visor 3D. Puedes usarlo también para grabar tu propio video con el celular mientras construyes, o para tu exposición.</p>
+    </div>
+    <div id="scriptList" class="grid2"></div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">Hospital Verde · guía de maqueta escolar. Medidas en centímetros; escala aproximada 1:30.</div></footer>
+
+<script>
+/* ===== MODELO ÚNICO DE MEDIDAS (cm). x: 0→80 izquierda a derecha; y: 0→60 fondo a calle; z: altura ===== */
+const H = {x0:6, x1:56, y0:10, y1:40, h:10, t:0.5};
+const OPZ = {w:[4,7], wb:[7,8.5], d:[0,7], d2:[0,7], arch:[0,8]};
+const WALLS = [
+  {id:'A', name:'Fachada principal', o:'h', y:39.75, a:6, b:56, ext:true, ends:['izquierda (farmacia)','derecha (urgencias)'],
+    ops:[{a:8,b:12,t:'w'},{a:15,b:18,t:'w'},{a:19,b:25,t:'d2'},{a:26,b:29,t:'w'},{a:32,b:36,t:'w'},{a:40,b:44,t:'w'},{a:49,b:53,t:'w'}]},
+  {id:'B', name:'Muro trasero', o:'h', y:10.25, a:6, b:56, ext:true, ends:['izquierda (baños)','derecha (urgencias)'],
+    ops:[{a:7,b:9,t:'wb'},{a:11,b:13,t:'wb'},{a:17,b:21,t:'w'},{a:27,b:31,t:'w'},{a:38,b:42,t:'w'},{a:49,b:53,t:'w'}]},
+  {id:'C', name:'Muro izquierdo', o:'v', x:6.25, a:10.5, b:39.5, ext:true, ends:['fondo (muro B)','frente (muro A)'],
+    ops:[{a:15,b:17,t:'wb'},{a:24,b:27,t:'w'},{a:32,b:36,t:'w'}]},
+  {id:'D', name:'Muro derecho', o:'v', x:55.75, a:10.5, b:39.5, ext:true, ends:['fondo (muro B)','frente (muro A)'],
+    ops:[{a:13,b:17,t:'w'},{a:23,b:29,t:'d2'},{a:33,b:37,t:'w'}]},
+  {id:'E', name:'Pasillo lado frente', o:'h', y:28.25, a:6.5, b:46, ends:['muro C','muro G'],
+    ops:[{a:10,b:13,t:'d'},{a:18,b:26,t:'arch'},{a:33,b:36,t:'d'},{a:41,b:44,t:'d'}]},
+  {id:'F', name:'Pasillo lado fondo', o:'h', y:22.75, a:6.5, b:46, ends:['muro C','muro G'],
+    ops:[{a:7,b:9.5,t:'d'},{a:11,b:13.5,t:'d'},{a:15.5,b:18.5,t:'d'},{a:25.5,b:28.5,t:'d'},{a:35,b:38,t:'d'}]},
+  {id:'G', name:'Muro de urgencias', o:'v', x:46.25, a:10.5, b:39.5, ends:['fondo (muro B)','frente (muro A)'],
+    ops:[{a:24,b:27,t:'d'}]},
+  {id:'H1', o:'v', x:14, a:28.5, b:39.5, ops:[]},{id:'H2', o:'v', x:30, a:28.5, b:39.5, ops:[]},{id:'H3', o:'v', x:38, a:28.5, b:39.5, ops:[]},
+  {id:'I1', o:'v', x:10, a:10.5, b:22.5, ops:[]},{id:'I2', o:'v', x:14, a:10.5, b:22.5, ops:[]},{id:'I3', o:'v', x:24, a:10.5, b:22.5, ops:[]},{id:'I4', o:'v', x:34, a:10.5, b:22.5, ops:[]}
+];
+const ROOMS = [
+  {n:'Farmacia', x0:6, x1:14, y0:28, y1:40, c:'#f3e3b5'},
+  {n:'Recepción y sala de espera', s:'Recepción', x0:14, x1:30, y0:28, y1:40, c:'#d9e7ef'},
+  {n:'Consultorio 1', x0:30, x1:38, y0:28, y1:40, c:'#e6f1e0'},
+  {n:'Consultorio 2', x0:38, x1:46, y0:28, y1:40, c:'#e6f1e0'},
+  {n:'Pasillo', x0:6, x1:46, y0:23, y1:28, c:'#ecebe6'},
+  {n:'Baño M', x0:6, x1:10, y0:10, y1:23, c:'#cfe6f2'},
+  {n:'Baño H', x0:10, x1:14, y0:10, y1:23, c:'#cfe6f2'},
+  {n:'Habitación 1', x0:14, x1:24, y0:10, y1:23, c:'#f1e6d6'},
+  {n:'Habitación 2', x0:24, x1:34, y0:10, y1:23, c:'#f1e6d6'},
+  {n:'Enfermería', x0:34, x1:46, y0:10, y1:23, c:'#f6dfe3'},
+  {n:'Urgencias', x0:46, x1:56, y0:10, y1:40, c:'#f6e0dc'}
+];
+/* Muebles: x,y = esquina; w (en x), d (en y), h altura */
+const FURN = [
+  {k:'shelf', x:12.2, y:31, w:1.5, d:6, h:6, n:'Anaquel'},
+  {k:'counter', x:7.5, y:34.5, w:4, d:1.5, h:3, n:'Mostrador', c:'#ffffff'},
+  {k:'counter', x:15, y:30, w:6, d:2, h:3, n:'Mostrador', c:'#3e9c8f'},
+  {k:'chair', x:17.4, y:28.8, w:1.2, d:1.2, h:2.8},
+  {k:'bench', x:24, y:31, w:5, d:1.3, h:2.8, n:'Banca'},
+  {k:'bench', x:24, y:34.5, w:5, d:1.3, h:2.8, n:'Banca'},
+  {k:'plant', x:14.7, y:38, w:1.2, d:1.2, h:3},
+  {k:'desk', x:30.8, y:32, w:4, d:2, h:2.5, n:'Escritorio'},
+  {k:'chair', x:31, y:30.6, w:1.2, d:1.2, h:2.8},{k:'chair', x:32.2, y:34.4, w:1.2, d:1.2, h:2.8},
+  {k:'stretcher', x:35.2, y:32.5, w:2.5, d:6, h:3, n:'Camilla'},
+  {k:'desk', x:38.8, y:32, w:4, d:2, h:2.5, n:'Escritorio'},
+  {k:'chair', x:39, y:30.6, w:1.2, d:1.2, h:2.8},{k:'chair', x:40.2, y:34.4, w:1.2, d:1.2, h:2.8},
+  {k:'stretcher', x:43.2, y:32.5, w:2.5, d:6, h:3, n:'Camilla'},
+  {k:'toilet', x:7.4, y:10.7, w:1.2, d:2, h:1.5},{k:'sink', x:6.6, y:16, w:1, d:1.5, h:2},
+  {k:'toilet', x:11.4, y:10.7, w:1.2, d:2, h:1.5},{k:'sink', x:12.65, y:16, w:1, d:1.5, h:2},
+  {k:'bed', x:14.8, y:10.7, w:3, d:6.5, h:2, n:'Cama'},{k:'bed', x:20.2, y:10.7, w:3, d:6.5, h:2, n:'Cama'},
+  {k:'night', x:18.25, y:10.7, w:1.5, d:1.5, h:2},{k:'armchair', x:22, y:19.5, w:1.5, d:1.5, h:2},
+  {k:'bed', x:24.8, y:10.7, w:3, d:6.5, h:2, n:'Cama'},{k:'bed', x:30.2, y:10.7, w:3, d:6.5, h:2, n:'Cama'},
+  {k:'night', x:28.25, y:10.7, w:1.5, d:1.5, h:2},{k:'armchair', x:32, y:19.5, w:1.5, d:1.5, h:2},
+  {k:'table', x:37, y:15, w:5, d:2.5, h:2.5, n:'Mesa'},
+  {k:'shelf', x:34.3, y:13, w:1.5, d:6, h:6, n:'Vitrina'},
+  {k:'desk', x:41.5, y:19.5, w:4, d:2, h:2.5, n:'Escritorio'},
+  {k:'chair', x:43, y:18, w:1.2, d:1.2, h:2.8},{k:'chair', x:38, y:13.6, w:1.2, d:1.2, h:2.8},{k:'chair', x:40, y:17.8, w:1.2, d:1.2, h:2.8},
+  {k:'cart', x:44, y:11, w:1.5, d:1, h:2},
+  {k:'stretcher', x:47, y:11, w:2.5, d:6, h:3, n:'Camilla'},{k:'stretcher', x:52.8, y:11, w:2.5, d:6, h:3, n:'Camilla'},
+  {k:'stretcher', x:47, y:32, w:2.5, d:6, h:3, n:'Camilla'},
+  {k:'screen', x:46.7, y:18, w:3.1, d:0.15, h:3.5},{k:'screen', x:46.7, y:31.6, w:3.1, d:0.15, h:3.5},
+  {k:'counter', x:52, y:34, w:3.4, d:1.5, h:3, n:'Triage', c:'#ffffff'},
+  {k:'wheel', x:50.5, y:20, w:1.5, d:1.5, h:2},{k:'cartRed', x:50, y:11, w:1.5, d:1.5, h:2}
+];
+const TREES = [[3,6,1],[3,22,1],[3,38,1],[20,7,1],[32,7,1],[42,7,1],[61,5,1],[12,43.5,0.7],[36,43.5,0.7]];
+const PANELS = []; [33.25,40.75,48.25].forEach(x=>[16,24].forEach(y=>PANELS.push({x,y,w:6,d:4})));
+const CIST = {x:52, y:4, r:3, h:7};
+const PIPE = [[49,4],[9,4],[9,9.5]];
+const CANOPY_A = {x:56, y:21, w:8, d:10, z:9};
+const CANOPY_F = {x:17, y:40, w:10, d:4, z:8};
+
+/* ===== GUION NARRADO ===== */
+const STAGES = [
+ {t:'Maqueta terminada', s:'Bienvenido. Vamos a construir juntos la maqueta del Hospital Verde. Es un hospital de un piso, de cincuenta por treinta centímetros, sobre una base de ochenta por sesenta. Tiene techo desmontable para ver todos los cuartos amueblados, y tres ecotecnologías: paneles solares, captación de agua de lluvia y azotea verde. Vamos paso a paso, con calma.'},
+ {t:'Preparación de la base', s:'Etapa uno. Preparamos la base. Corta una tabla de cartón pluma de ochenta por sesenta centímetros y pégala sobre un cartón de caja del mismo tamaño, con poco resistol en zigzag. Corta siempre con regla metálica, dando varias pasadas suaves con el cúter. Pon libros encima y deja secar dos horas. La base debe quedar plana y firme.'},
+ {t:'Trazo de la distribución', s:'Etapa dos. Dibujamos el mapa sobre la base. La esquina de atrás a la izquierda es el punto cero. Haz una cuadrícula suave cada cinco centímetros. Dibuja el rectángulo del hospital, de equis seis a cincuenta y seis, y de ye diez a cuarenta. Luego la calle, la banqueta, el carril de ambulancias, el estacionamiento y los jardines. Traza también cada muro interior y escribe el nombre de cada cuarto. Mide siempre desde el borde de la base.'},
+ {t:'Muros exteriores', s:'Etapa tres. Construimos los cuatro muros de fuera. Corta dos piezas de cincuenta por diez, la fachada y el muro trasero, y dos de veintinueve por diez para los lados. Dibuja las puertas y ventanas con la plantilla y córtalas antes de pegar. Pega primero el muro trasero, luego los lados y al final la fachada. Revisa con la escuadra que cada esquina quede recta, y sujeta con alfileres mientras seca.'},
+ {t:'Divisiones interiores', s:'Etapa cuatro. Ahora las divisiones. Pega primero el muro de urgencias, de veintinueve centímetros. Después los dos muros del pasillo, de treinta y nueve y medio, que dejan un pasillo de cinco centímetros. Al final las divisiones pequeñas: tres de once centímetros al frente y cuatro de doce al fondo. Antes de cortar cada una, mide el hueco real en tu maqueta.'},
+ {t:'Puertas y ventanas', s:'Etapa cinco. Ponemos los vidrios. Corta el acetato un centímetro más grande que cada hueco y pégalo por dentro con una línea delgada de resistol, tomándolo de las orillas. Por fuera pega marcos de cartulina blanca. Las puertas de entrada y de urgencias son de vidrio con marco plateado. Las puertas interiores se pegan entreabiertas para poder ver dentro.'},
+ {t:'Pisos y techo', s:'Etapa seis. Pisos y techo. Recorta un piso de color para cada cuarto: azul en baños, madera en habitaciones, verde en consultorios. Pruébalo y luego pégalo. Para el techo corta dos tapas de veinticinco y medio por treinta y uno. No las pegues: lleva topes por debajo para que no resbalen y se puedan quitar.'},
+ {t:'Muebles', s:'Etapa siete. Fabricamos los muebles. Las camas miden seis y medio por tres, con colchón de foami y cabecera de cartón. Las camillas se hacen con abatelenguas y patas de palillo. Los escritorios miden cuatro por dos, y las sillas se hacen con palitos de paleta. Recuerda el orden: base, patas, respaldo, y al final el color.'},
+ {t:'Decoración de las habitaciones', s:'Etapa ocho. Acomodamos y decoramos. Primero presenta todos los muebles de un cuarto sin pegarlos. Cuando te guste, pega cada uno con una gota de silicón. Deja libre el paso frente a cada puerta. Agrega cuadros, una televisión en la sala de espera, letreros en las puertas y plantitas.'},
+ {t:'Las tres ecotecnologías', s:'Etapa nueve. Las tres ecotecnologías. En la tapa derecha pega seis paneles solares azules, con su cuadrícula plateada, inclinados hacia la calle, y un cable hasta el inversor. En la tapa izquierda arma la azotea verde: borde, capa negra, pasto, andador y plantas, con un corte de capas en una esquina. Atrás, pega la canaleta al muro, el bajante en la esquina, el filtro, la cisterna y un tubo azul hasta los baños.'},
+ {t:'Calles y jardines', s:'Etapa diez. La zona urbana. Pega la calle negra, la banqueta gris, el carril de ambulancias y el estacionamiento. Pinta las líneas con regla. Pega el pasto de los jardines y planta nueve árboles de esponja. Coloca las dos marquesinas: la de la entrada y la roja de urgencias. Pon la ambulancia y algunos autos.'},
+ {t:'Pintura y acabados', s:'Etapa once. Los acabados. Pinta los muros de blanco con dos capas delgadas, y el zoclo de verde azulado usando cinta como guía. Pega los letreros de hospital y urgencias, y las señales de la calle. Limpia el polvo con un pincel seco. ¡Listo! Tu Hospital Verde está terminado. Felicidades por tu trabajo.'}
+];
+
+/* ===== MATERIALES ===== */
+const MATS = [
+ ['Cartón pluma 5 mm, 70 × 100 cm','1 hoja','Base','swap','2 capas de caja de cartón',110],
+ ['Cartón pluma 5 mm, 50 × 70 cm','3 hojas','Muros (2) y techo, marquesinas y muebles (1)','must','',150],
+ ['Cartón corrugado reciclado 80 × 60','1','Refuerzo bajo la base','swap','reciclado',0],
+ ['Cartulina blanca','3 pliegos','Pisos, marcos, letreros, plantillas','must','',24],
+ ['Cartulina gris','2 pliegos','Banqueta, plaza, estacionamiento, canaleta','swap','pintura gris',16],
+ ['Cartulina negra','2 pliegos','Calle, carril, capa impermeable de la azotea','swap','pintura negra',16],
+ ['Cartulina azul marino','1 pliego','Paneles solares','swap','foami azul oscuro',8],
+ ['Cartulina verde','2 pliegos','Jardines (si no usas pasto)','swap','aserrín pintado',16],
+ ['Papel lustre o china de colores','10 hojas','Cobijas, cortinas, cuadros','swap','revistas, tela',20],
+ ['Acetato tamaño carta','2 hojas','Vidrios de ventanas y puertas','swap','mica de folder o bolsa transparente',20],
+ ['Foami tamaño carta (blanco ×3, azul cielo ×2, verde ×2, rojo, café, gris, amarillo, rosa)','12 hojas','Colchones, bancas, pisos, detalles','must','',60],
+ ['Foami diamantado plateado','1 hoja','Marcos de puertas de vidrio','swap','marcador plateado',12],
+ ['Abatelenguas','1 paquete (50)','Camillas, escritorios, bancas','must','',30],
+ ['Palitos de paleta','1 paquete (50)','Sillas, andador, bancas de la azotea','swap','cartón pluma',25],
+ ['Palillos de brocheta','1 paquete (100)','Troncos, postes, patas de mesas','must','',25],
+ ['Palillos de dientes','1 caja','Patas de camillas, barandales','swap','brochetas cortadas',10],
+ ['Silicón frío 100 ml','1','Pegar muros y acetato','must','',40],
+ ['Pistola chica de silicón + 10 barras','1 + 10','Muebles y piezas rápidas','swap','solo silicón frío',70],
+ ['Resistol 850 (110 g)','1','Pisos, papel, pasto, base','must','',35],
+ ['Cinta masking','1 rollo','Sostener mientras seca, guías de pintura','must','',25],
+ ['Alfileres','1 cajita','Sostener muros mientras secan','swap','cinta masking',15],
+ ['Pintura vinílica o acrílica blanca 250 ml','1','Muros exteriores, tapas del techo','must','',45],
+ ['Pintura acrílica 60 ml (gris, verde, café, rojo, amarillo, azul)','6','Calles, líneas, troncos, detalles','swap','plumones o cartulinas',120],
+ ['Pinceles (plano 2.5 cm, plano 1 cm, delgado)','3','Pintar muros y líneas','must','',45],
+ ['Marcador plateado, plumón negro fino y plumones de colores','1 juego','Celdas solares, letreros, cuadritos','must','',55],
+ ['Pasto artificial 30 × 30','1','Azotea verde y jardines','swap','aserrín verde o franela verde',45],
+ ['Esponja verde (fibra o floral)','3 piezas','Copas de árboles y arbustos','must','',30],
+ ['Grava de pecera o piedritas','1 bolsa chica','Capa de drenaje de la azotea','swap','arena o lentejas pintadas',20],
+ ['Fieltro beige 20 × 20','1','Capa filtro de la azotea','swap','franela',10],
+ ['Popotes gruesos y popotes azules','1 paquete','Bajante y tubería de agua de lluvia','must','',15],
+ ['Estambre negro','1 m','Cable de los paneles al inversor','swap','hilo negro',10],
+ ['Cúter grande + navajas de repuesto','1','Cortar cartón pluma','must','',45],
+ ['Regla metálica 50 cm','1','Cortes rectos y medir','must','',50],
+ ['Escuadra','1','Esquinas a 90°','must','',20],
+ ['Tijeras, lápiz HB, goma, sacapuntas','1 juego','Trazar y recortar','must','',35],
+ ['Lija fina','1 pliego','Emparejar cantos','swap','opcional',10],
+ ['Impresión de letreros y señales','1 hoja color','Señalamientos','swap','dibujarlos a mano',10]
+];
+</script>
+
+<script>
+/* ===== Utilidades SVG ===== */
+const R = (x,y,w,h,f,extra='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${extra}/>`;
+const T = (x,y,s,extra='') => `<text x="${x}" y="${y}" ${extra}>${s}</text>`;
+const INK = 'class="tk"';
+const DARK = '#1d2f2b';
+function solids(w){ // tramos macizos (sin huecos de piso a techo)
+  const ops=[...w.ops].sort((p,q)=>p.a-q.a); const out=[]; let c=w.a;
+  ops.forEach(o=>{ if(o.a>c) out.push([c,o.a]); c=o.b; }); if(c<w.b) out.push([c,w.b]); return out;
+}
+function svgWrap(vb, body){ return `<svg class="dg plansvg" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${body}</svg>`; }
+function treeTop(x,y,s,S){ const r=2*s*S; return `<circle cx="${x*S}" cy="${y*S}" r="${r}" fill="#5f9e3f" stroke="#3f6f27" stroke-width="1.5"/><circle cx="${x*S-r*.3}" cy="${y*S-r*.3}" r="${r*.45}" fill="#7dbb57"/>`; }
+
+/* ===== Plano general ===== */
+function sitePlan(){
+  const S=10; let g='';
+  g+=R(0,0,800,600,'#e7ede4','stroke="#7d8a84" stroke-width="2"');
+  // zonas
+  g+=R(0,0,65*S,10*S,'#a9cf8a')+R(0,0,6*S,46*S,'#a9cf8a')+R(65*S,0,15*S,6*S,'#a9cf8a')+R(56*S,10*S,1*S,36*S,'#c9ccc8');
+  g+=R(6*S,40*S,50*S,6*S,'#d9dbd7')+R(0,46*S,80*S,4*S,'#c3c7c3')+R(0,50*S,80*S,10*S,'#4a4f55');
+  g+=R(57*S,10*S,8*S,40*S,'#5c6168')+R(65*S,6*S,15*S,40*S,'#666b72');
+  g+=R(8*S,42*S,8*S,3*S,'#8fbf6e','stroke="#5e8a43"')+R(32*S,42*S,8*S,3*S,'#8fbf6e','stroke="#5e8a43"');
+  // cuadrícula
+  for(let i=5;i<80;i+=5) g+=`<line x1="${i*S}" y1="0" x2="${i*S}" y2="600" stroke="#000" stroke-opacity=".07"/>`;
+  for(let j=5;j<60;j+=5) g+=`<line x1="0" y1="${j*S}" x2="800" y2="${j*S}" stroke="#000" stroke-opacity=".07"/>`;
+  // calle
+  for(let x=1;x<80;x+=4) g+=R(x*S,54.85*S,2*S,0.3*S,'#f2c230');
+  for(let k=0;k<6;k++) g+=R(18*S,(50.6+k*1.6)*S,8*S,0.8*S,'#f4f4f4');
+  // cajones
+  for(let j=6;j<=46;j+=8) g+=R(65*S,j*S-1.5,15*S,3,'#fff');
+  g+=`<g transform="translate(${73*S},${42*S})"><circle r="16" fill="#2a64c5"/>${T(0,6,'♿','text-anchor="middle" style="font-size:18px;fill:#fff"')}</g>`;
+  // flechas carril
+  [44,16].forEach(y=>g+=`<path d="M${61*S} ${(y-2)*S} l-12 18 h8 v20 h8 v-20 h8 z" fill="#fff"/>`);
+  // hospital: techo
+  g+=R(5.5*S,9.5*S,25.5*S,31*S,'#6fae4a','stroke="#3f6f27" stroke-width="3"');
+  g+=R(5.5*S,35.5*S,5*S,5*S,'#8a6a48','stroke="#3f6f27" stroke-width="2"')+R(6.5*S,36.5*S,4*S,4*S,'#9c9286')+R(7.5*S,37.5*S,3*S,3*S,'#6b4a2f');
+  g+=R(17*S,10*S,2*S,30*S,'#c9a26a');
+  [[10,16],[24,18],[12,28],[26,30]].forEach(([x,y])=>g+=`<circle cx="${x*S}" cy="${y*S}" r="16" fill="#4f8f35"/><circle cx="${x*S+12}" cy="${y*S+6}" r="5" fill="#f3c74e"/>`);
+  g+=R(31*S,9.5*S,25.5*S,31*S,'#c9c7c0','stroke="#8a877f" stroke-width="3"');
+  PANELS.forEach(p=>{ g+=R(p.x*S,p.y*S,p.w*S,p.d*S,'#1d3f73','stroke="#9fb7de"'); for(let k=1;k<4;k++) g+=`<line x1="${(p.x+k*1.5)*S}" y1="${p.y*S}" x2="${(p.x+k*1.5)*S}" y2="${(p.y+p.d)*S}" stroke="#9fb7de" stroke-width=".8"/>`; g+=`<line x1="${p.x*S}" y1="${(p.y+2)*S}" x2="${(p.x+p.w)*S}" y2="${(p.y+2)*S}" stroke="#9fb7de" stroke-width=".8"/>`; });
+  // marquesinas
+  g+=R(CANOPY_F.x*S,CANOPY_F.y*S,CANOPY_F.w*S,CANOPY_F.d*S,'#f7f7f4','stroke="#8a877f" stroke-width="2"');
+  g+=R(CANOPY_A.x*S,CANOPY_A.y*S,CANOPY_A.w*S,CANOPY_A.d*S,'#f7f7f4','stroke="#8a877f" stroke-width="2"')+R((CANOPY_A.x+7)*S,CANOPY_A.y*S,1*S,CANOPY_A.d*S,'#c2372c');
+  // agua de lluvia
+  g+=R(6*S,9.2*S,50*S,0.8*S,'#7d8790')+`<circle cx="${55.4*S}" cy="${9.4*S}" r="5" fill="#5d6770"/>`;
+  g+=`<polyline points="${PIPE.map(p=>p[0]*S+','+p[1]*S).join(' ')}" fill="none" stroke="#1f86b8" stroke-width="4"/>`;
+  g+=`<circle cx="${CIST.x*S}" cy="${CIST.y*S}" r="${CIST.r*S}" fill="#4fa8d6" stroke="#1f6f99" stroke-width="3"/><circle cx="${55.6*S}" cy="${8*S}" r="8" fill="#9aa3ab"/>`;
+  g+=R(50*S,8.5*S,2*S,0.7*S,'#8a9097');
+  g+=R(24.5*S,8.3*S,3*S,0.8*S,'#9b7650');
+  // árboles
+  TREES.forEach(([x,y,s])=>g+=treeTop(x,y,s,S));
+  // vehículos
+  g+=R(59*S,22*S,3.5*S,8*S,'#ffffff','stroke="#c2372c" stroke-width="2" rx="4"')+R(59*S,25.5*S,3.5*S,0.8*S,'#c2372c');
+  g+=R(68.75*S,16.25*S,7.5*S,3.5*S,'#e0a224','rx="6"')+R(68.75*S,32.25*S,7.5*S,3.5*S,'#3a74b8','rx="6"');
+  // señales
+  [[4,48,'H','#2a64c5'],[78,47.5,'E','#2a64c5'],[66,47.5,'A','#c2372c'],[56.5,47.5,'⊘','#c2372c']].forEach(([x,y,l,c])=>g+=`<circle cx="${x*S}" cy="${y*S}" r="11" fill="${c}" stroke="#fff" stroke-width="2"/>${T(x*S,y*S+5,l,'text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px"')}`);
+  // rótulos
+  const L=(x,y,s,c=DARK,extra='')=>T(x*S,y*S,s,`text-anchor="middle" style="fill:${c};font-weight:700;font-size:13px" ${extra}`);
+  g+=L(40,57.6,'CALLE','#ffffff')+L(40,48.6,'BANQUETA')+L(48,44.6,'PLAZA DE ACCESO')+L(22,45.6,'▲ ENTRADA')+L(72.5,11,'ESTACIONAMIENTO','#ffffff');
+  g+=`<text transform="translate(${61.4*S},${31.8*S}) rotate(90)" style="fill:#fff;font-weight:700;font-size:11px">CARRIL AMBULANCIAS</text>`;
+  g+=L(30,1.7,'JARDÍN TRASERO')+`<text transform="translate(${3*S},${30*S}) rotate(-90)" text-anchor="middle" style="fill:${DARK};font-weight:700;font-size:12px">JARDÍN</text>`;
+  g+=`<rect x="${7*S}" y="${21.5*S}" width="${22.5*S}" height="${3.4*S}" rx="6" fill="#ffffff" fill-opacity=".85"/>`+L(18.25,23.8,'AZOTEA VERDE (tapa izquierda)','#2f5d1d');
+  g+=`<rect x="${32.5*S}" y="${30.5*S}" width="${22.5*S}" height="${3.4*S}" rx="6" fill="#ffffff" fill-opacity=".85"/>`+L(43.75,32.8,'PANELES SOLARES (tapa derecha)','#1d3f73');
+  g+=T(48.5*S,3.1*S,'cisterna',`text-anchor="end" style="fill:#14506f;font-weight:700;font-size:12px"`)+T(10*S,3.2*S,'agua de lluvia → baños',`style="fill:#14506f;font-size:11px"`);
+  g+=T(60.5*S,19.6*S,'URGENCIAS',`text-anchor="middle" style="fill:#c2372c;font-weight:700;font-size:11px"`);
+  // cotas
+  g+=`<g ${INK}><line x1="0" y1="-18" x2="800" y2="-18"/><line x1="0" y1="-26" x2="0" y2="-10"/><line x1="800" y1="-26" x2="800" y2="-10"/>${T(400,-24,'80 cm','text-anchor="middle"')}
+   <line x1="-18" y1="0" x2="-18" y2="600"/><line x1="-26" y1="0" x2="-10" y2="0"/><line x1="-26" y1="600" x2="-10" y2="600"/>${T(-24,300,'60 cm','text-anchor="middle" transform="rotate(-90 -24 300)"')}
+   <line x1="${6*S}" y1="614" x2="${56*S}" y2="614"/><line x1="${6*S}" y1="606" x2="${6*S}" y2="622"/><line x1="${56*S}" y1="606" x2="${56*S}" y2="622"/>${T(31*S,632,'hospital 50 cm','text-anchor="middle"')}
+   <line x1="${57*S}" y1="614" x2="${65*S}" y2="614"/>${T(61*S,632,'8','text-anchor="middle"')}<line x1="${65*S}" y1="614" x2="${80*S}" y2="614"/><line x1="${65*S}" y1="606" x2="${65*S}" y2="622"/>${T(72.5*S,632,'15','text-anchor="middle"')}
+   <line x1="818" y1="${50*S}" x2="818" y2="${60*S}"/>${T(824,55.4*S,'10')}<line x1="818" y1="${46*S}" x2="818" y2="${50*S}"/>${T(824,48.4*S,'4')}<line x1="818" y1="${10*S}" x2="818" y2="${40*S}"/>${T(824,25*S,'30')}<line x1="818" y1="0" x2="818" y2="${10*S}"/>${T(824,5*S,'10')}</g>`;
+  return svgWrap('-44 -44 900 690', g);
+}
+
+/* ===== Plano de distribución ===== */
+const FCOL = {shelf:'#d9c3a0',counter:'#ffffff',chair:'#4b7bb5',bench:'#3f87c9',plant:'#5f9e3f',desk:'#c9a26a',stretcher:'#9fd0e8',toilet:'#ffffff',sink:'#ffffff',bed:'#ffffff',night:'#d8c3a5',armchair:'#7aa86a',table:'#c9a26a',cart:'#d0d6db',screen:'#8ec7e0',wheel:'#555c66',cartRed:'#c2372c'};
+function floorPlan(){
+  const S=16, ox=4, oy=7; const X=x=>(x-ox)*S, Y=y=>(y-oy)*S; let g='';
+  g+=R(0,0,54*S,36*S,'#eef2ee');
+  ROOMS.forEach(r=>g+=R(X(r.x0),Y(r.y0),(r.x1-r.x0)*S,(r.y1-r.y0)*S,r.c));
+  FURN.forEach(f=>{ const c=f.c||FCOL[f.k]; g+=R(X(f.x),Y(f.y),f.w*S,f.d*S,c,'stroke="#55625e" stroke-width="1" rx="2"');
+    if(f.k==='bed'){ g+=R(X(f.x)+3,Y(f.y)+3,f.w*S-6,1.2*S,'#e4edf3','stroke="#9aa"')+R(X(f.x),Y(f.y)+2.6*S,f.w*S,f.d*S-2.6*S,'#7fb0d6','opacity=".8"'); }
+    if(f.k==='stretcher') g+=R(X(f.x)+3,Y(f.y)+3,f.w*S-6,1*S,'#ffffff');
+    if(f.k==='toilet') g+=`<ellipse cx="${X(f.x+f.w/2)}" cy="${Y(f.y+1.3)}" rx="${f.w*S/2-2}" ry="${0.6*S}" fill="#e8eef2" stroke="#889"/>`;
+  });
+  // muros
+  WALLS.forEach(w=>{ solids(w).forEach(([a,b])=>{ g+= w.o==='h' ? R(X(a),Y(w.y-H.t/2),(b-a)*S,H.t*S,'#26332f') : R(X(w.x-H.t/2),Y(a),H.t*S,(b-a)*S,'#26332f'); });
+    w.ops.forEach(o=>{ const z=OPZ[o.t];
+      if(o.t==='w'||o.t==='wb'){ g+= w.o==='h' ? R(X(o.a),Y(w.y-H.t/2),(o.b-o.a)*S,H.t*S,'#bfe3f2','stroke="#26332f" stroke-width="1"') : R(X(w.x-H.t/2),Y(o.a),H.t*S,(o.b-o.a)*S,'#bfe3f2','stroke="#26332f" stroke-width="1"'); }
+      else if(o.t==='arch'){ g+= `<line x1="${X(o.a)}" y1="${Y(w.y)}" x2="${X(o.b)}" y2="${Y(w.y)}" stroke="#26332f" stroke-dasharray="4 4"/>`; }
+      else { const leaves = o.t==='d2' ? [[o.a,(o.a+o.b)/2,1],[o.b,(o.a+o.b)/2,-1]] : [[o.a,o.b,1]];
+        leaves.forEach(([p,q,sg])=>{ const r=Math.abs(q-p)*S;
+          if(w.o==='h'){ const dir = w.y>30 ? 1 : -1; // abre hacia adentro del cuarto
+            const px=X(p), py=Y(w.y); g+=`<path d="M${px} ${py} L${px} ${py-dir*r} A${r} ${r} 0 0 ${sg*dir>0?1:0} ${X(q)} ${py}" fill="none" stroke="#55625e" stroke-width="1"/>`; }
+          else { const px=X(w.x), py=Y(p); const dir = w.x>50 ? -1 : 1; g+=`<path d="M${px} ${py} L${px+dir*r} ${py} A${r} ${r} 0 0 ${sg*dir>0?1:0} ${px} ${Y(q)}" fill="none" stroke="#55625e" stroke-width="1"/>`; }
+        }); }
+    });
+  });
+  // rótulos de cuartos
+  const lab = {'Farmacia':[10,39],'Recepción y sala de espera':[22,38.6],'Consultorio 1':[34,30.8],'Consultorio 2':[42,30.8],'Pasillo':[30,25.9],'Baño M':[8,20],'Baño H':[12,20],'Habitación 1':[19,21.6],'Habitación 2':[29,21.6],'Enfermería':[39,21.6],'Urgencias':[51,26.2]};
+  ROOMS.forEach(r=>{ const [x,y]=lab[r.n]; const nm = r.n==='Recepción y sala de espera'?'Recepción · sala de espera':r.n; g+=T(X(x),Y(y),nm,`text-anchor="middle" style="fill:${DARK};font-weight:700;font-size:${r.n.startsWith('Baño')?10:12}px;font-family:var(--f-display)"`); });
+  g+=T(X(22),Y(42.6),'▲ ENTRADA PACIENTES',`text-anchor="middle" style="fill:#0b6f63;font-weight:700"`);
+  g+=`<text transform="translate(${X(57.6)},${Y(22.5)}) rotate(90)" style="fill:#c2372c;font-weight:700">◀ AMBULANCIAS</text>`;
+  // cotas
+  const xs=[6,10,14,24,30,34,38,46,56], ys=[10,23,28,40];
+  let d=`<g ${INK}>`; const yy=Y(8.6);
+  d+=`<line x1="${X(6)}" y1="${yy}" x2="${X(56)}" y2="${yy}"/>`;
+  xs.forEach((x,i)=>{ d+=`<line x1="${X(x)}" y1="${yy-6}" x2="${X(x)}" y2="${yy+6}"/>`; if(i) d+=T((X(x)+X(xs[i-1]))/2,yy-5,x-xs[i-1],'text-anchor="middle"'); });
+  const xx=X(4.9); d+=`<line x1="${xx}" y1="${Y(10)}" x2="${xx}" y2="${Y(40)}"/>`;
+  ys.forEach((y,i)=>{ d+=`<line x1="${xx-6}" y1="${Y(y)}" x2="${xx+6}" y2="${Y(y)}"/>`; if(i) d+=T(xx-5,(Y(y)+Y(ys[i-1]))/2+4,y-ys[i-1],'text-anchor="end"'); });
+  d+='</g>';
+  return svgWrap(`-10 0 ${54*S+10} ${36*S}`, g+d);
+}
+
+/* ===== Alzados ===== */
+function elevTree(u,s,S,Z,fill='#5f9e3f'){ return R(u*S-2,Z(5*s),4,5*s*S,'#7a5636')+`<ellipse cx="${u*S}" cy="${Z(6.6*s)}" rx="${2*s*S}" ry="${2.2*s*S}" fill="${fill}" stroke="#3f6f27"/>`; }
+function wallFace(w, a0, S, U, Z, flip){ // dibuja cara de muro con huecos
+  let g=''; const L=(w.b-w.a);
+  g+=R(Math.min(U(w.a),U(w.b)),Z(10),L*S,10*S,'#f4f2ec','stroke="#55625e"')+R(Math.min(U(w.a),U(w.b)),Z(1.5),L*S,1.5*S,'#3e9c8f')+R(Math.min(U(w.a),U(w.b)),Z(10),L*S,0.7*S,'#3e9c8f');
+  w.ops.forEach(o=>{ const z=OPZ[o.t]; const u0=Math.min(U(o.a),U(o.b)); g+=R(u0,Z(z[1]),(o.b-o.a)*S,(z[1]-z[0])*S,'#bfe3f2','stroke="#8d969b" stroke-width="2"');
+    if(o.t==='d2') g+=`<line x1="${u0+(o.b-o.a)*S/2}" y1="${Z(7)}" x2="${u0+(o.b-o.a)*S/2}" y2="${Z(0)}" stroke="#8d969b" stroke-width="2"/>`; });
+  return g;
+}
+function frontElev(){
+  const S=12, Z=z=>(15-z)*S, U=x=>x*S; let g='';
+  TREES.filter(t=>t[1]<40).forEach(([x,y,s])=>g+=elevTree(x,s,S,Z,'#7fae62'));
+  g+=R(U(5.5),Z(10.5),51*S,0.5*S,'#b9b6ae');
+  g+=R(U(5.5),Z(11.5),25.5*S,1*S,'#4f7d34'); [9,14,20,26].forEach(x=>g+=`<ellipse cx="${U(x)}" cy="${Z(11.6)}" rx="14" ry="9" fill="#5f9e3f"/>`);
+  PANELS.filter(p=>p.y===24).forEach(p=>g+=R(U(p.x),Z(12.1),p.w*S,1.6*S,'#1d3f73','stroke="#9fb7de"'));
+  g+=wallFace(WALLS[0],0,S,U,Z);
+  // marquesina de urgencias y ambulancia
+  g+=R(U(63.35),Z(9),0.3*S,9*S,'#9aa3ab')+R(U(56),Z(9.4),8*S,0.4*S,'#f7f7f4','stroke="#8a877f"')+R(U(56),Z(9.4),8*S,0.15*S,'#c2372c');
+  g+=R(U(59),Z(3.8),3.5*S,3.5*S,'#ffffff','stroke="#c2372c" stroke-width="2"')+R(U(59),Z(2.4),3.5*S,0.5*S,'#c2372c');
+  g+=R(U(68.5),Z(2.6),7.5*S,2.2*S,'#3a74b8','rx="6"')+`<circle cx="${U(70.2)}" cy="${Z(0.45)}" r="6" fill="#222"/><circle cx="${U(74.3)}" cy="${Z(0.45)}" r="6" fill="#222"/>`;
+  // marquesina y letrero
+  g+=R(U(17.35),Z(8),0.3*S,8*S,'#9aa3ab')+R(U(26.35),Z(8),0.3*S,8*S,'#9aa3ab')+R(U(17),Z(8.4),10*S,0.4*S,'#f7f7f4','stroke="#8a877f"');
+  g+=R(U(18),Z(9.9),8*S,1.4*S,'#0b6f63','rx="3"')+T(U(22),Z(8.85),'HOSPITAL','text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px;letter-spacing:2px"');
+  TREES.filter(t=>t[1]>=40).forEach(([x,y,s])=>g+=elevTree(x,s,S,Z));
+  [[4,'H','#2a64c5'],[78,'E','#2a64c5'],[66,'A','#c2372c']].forEach(([x,l,c])=>g+=R(U(x)-1.5,Z(5),3,5*S,'#777')+R(U(x)-9,Z(6.4),18,18,c,'rx="3"')+T(U(x),Z(5.2),l,'text-anchor="middle" style="fill:#fff;font-weight:700"'));
+  g+=R(0,Z(0),80*S,1*S,'#c9ccc8','stroke="#55625e"');
+  g+=`<g ${INK}><line x1="${U(-1)}" y1="${Z(0)}" x2="${U(-1)}" y2="${Z(10)}"/>${T(U(-1.4),Z(5),'10','text-anchor="end"')}
+    <line x1="${U(6)}" y1="${Z(-2)}" x2="${U(56)}" y2="${Z(-2)}"/><line x1="${U(6)}" y1="${Z(-1.4)}" x2="${U(6)}" y2="${Z(-2.6)}"/><line x1="${U(56)}" y1="${Z(-1.4)}" x2="${U(56)}" y2="${Z(-2.6)}"/>${T(U(31),Z(-3.4),'50 cm · fachada principal (pieza A)','text-anchor="middle"')}
+    ${T(U(22),Z(-0.4)+14,'puerta 6 × 7','text-anchor="middle"')}${T(U(47.5),Z(3.1),'ventana 4×3','text-anchor="middle"')}${T(U(47.5),Z(2.1),'repisa a 4','text-anchor="middle"')}
+    ${T(U(18),Z(13.4),'azotea verde','text-anchor="middle"')}${T(U(44),Z(13.4),'paneles solares','text-anchor="middle"')}${T(U(60),Z(10.9),'marquesina a 9','text-anchor="middle"')}</g>`;
+  return svgWrap(`-40 0 ${80*S+50} ${19*S}`, g);
+}
+function sideElev(){
+  const S=12, Z=z=>(15-z)*S, U=y=>(60-y)*S; let g='';
+  TREES.filter(t=>t[0]<56).forEach(([x,y,s])=>g+=elevTree(60-y,s,S,Z,'#7fae62'));
+  g+=R(U(40.5),Z(10.5),31*S,0.5*S,'#b9b6ae')+R(U(40.5),Z(11.5),31*S,1*S,'#4f7d34');
+  PANELS.filter(p=>p.x===48.25).forEach(p=>{ g+=`<polygon points="${U(p.y+p.d)},${Z(10.6)} ${U(p.y)},${Z(12.1)} ${U(p.y)},${Z(12.45)} ${U(p.y+p.d)},${Z(10.95)}" fill="#1d3f73"/>`+R(U(p.y)-1,Z(12.1),2,1.5*S,'#8a877f'); });
+  g+=R(U(10),Z(10),0.8*S,1*S,'#7d8790');
+  g+=wallFace({a:10,b:40,ops:WALLS[3].ops},0,S,U,Z);
+  g+=R(U(9.6),Z(10),0.6*S,10*S,'#5d6770');
+  g+=R(U(7),Z(7),6*S,7*S,'#9fc9de','stroke="#1f6f99" stroke-width="2"')+R(U(7)+3,Z(5),6*S-6,5*S-3,'#4fa8d6');
+  g+=R(U(8.8),Z(1.2),1.6*S,1.2*S,'#9aa3ab');
+  g+=elevTree(60-5,1,S,Z);
+  // marquesina
+  g+=R(U(31),Z(9.4),10*S,0.4*S,'#f7f7f4','stroke="#8a877f"')+R(U(31),Z(9.4)-0.9*S,10*S,0.9*S,'#c2372c')+T(U(26),Z(9.95),'URGENCIAS','text-anchor="middle" style="fill:#fff;font-weight:700;font-size:10px;letter-spacing:1px"');
+  [21.5,30.5].forEach(y=>g+=R(U(y)-2,Z(9),3.5,9*S,'#9aa3ab'));
+  g+=R(U(30),Z(3.8),8*S,3.5*S,'#ffffff','stroke="#c2372c" stroke-width="2"')+R(U(30),Z(2.4),8*S,0.5*S,'#c2372c')+T(U(26),Z(2.6),'✚','text-anchor="middle" style="fill:#c2372c;font-size:16px"');
+  [[18,'#e0a224'],[34,'#3a74b8']].forEach(([y,c])=>g+=R(U(y+1.75),Z(2.6),3.5*S,2.2*S,c,'rx="6"'));
+  g+=R(U(47.5)-1.5,Z(5),3,5*S,'#777')+R(U(47.5)-9,Z(6.4),18,18,'#2a64c5','rx="3"')+T(U(47.5),Z(5.2),'E','text-anchor="middle" style="fill:#fff;font-weight:700"');
+  g+=R(0,Z(0),60*S,1*S,'#c9ccc8','stroke="#55625e"');
+  g+=`<g ${INK}><line x1="${U(10)}" y1="${Z(-2)}" x2="${U(40)}" y2="${Z(-2)}"/>${T(U(25),Z(-3.4),'30 cm · muro derecho (pieza D)','text-anchor="middle"')}
+   ${T(U(55),Z(-0.4)+14,'◀ calle','text-anchor="middle"')}${T(U(4.5),Z(-0.4)+14,'cisterna · fondo ▶','text-anchor="middle"')}${T(U(26),Z(-0.4)+14,'puerta ambulancias 6×7','text-anchor="middle"')}
+   ${T(U(10)+16,Z(11.2),'canaleta','')}${T(U(9.6)-6,Z(2.6),'bajante →','text-anchor="end"')}${T(U(38),Z(13.6),'paneles inclinados','text-anchor="middle"')}</g>`;
+  return svgWrap(`-10 0 ${60*S+20} ${19*S}`, g);
+}
+function sectionView(){
+  const S=16, Z=z=>(13.5-z)*S, U=x=>(x-4)*S; let g='';
+  g+=R(U(6.5),Z(10),49*S,10*S,'#efece4');
+  ROOMS.filter(r=>r.y0<20).forEach(r=>g+=R(U(r.x0),Z(0.15),(r.x1-r.x0)*S,0.15*S,r.c,'stroke="#999"'));
+  WALLS[1].ops.forEach(o=>{ const z=OPZ[o.t]; g+=R(U(o.a),Z(z[1]),(o.b-o.a)*S,(z[1]-z[0])*S,'#cfe9f5','stroke="#8d969b"'); });
+  const items = FURN.filter(f=>f.y<20).sort((a,b)=>a.y-b.y);
+  items.forEach(f=>{ const c=f.c||FCOL[f.k];
+    if(f.k==='bed'){ g+=R(U(f.x),Z(3.5),f.w*S,3.5*S,'#e6e1d6','stroke="#55625e"')+R(U(f.x),Z(2),f.w*S,0.8*S,'#ffffff','stroke="#55625e"')+R(U(f.x),Z(1.4),f.w*S,0.6*S,'#7fb0d6')+R(U(f.x)+2,Z(1.2),3,1.2*S,'#888')+R(U(f.x+f.w)-5,Z(1.2),3,1.2*S,'#888'); }
+    else if(f.k==='stretcher'||f.k==='table'||f.k==='desk'){ g+=R(U(f.x),Z(f.h),f.w*S,0.5*S,c,'stroke="#55625e"')+R(U(f.x)+2,Z(f.h-0.5),3,(f.h-0.5)*S,'#888')+R(U(f.x+f.w)-5,Z(f.h-0.5),3,(f.h-0.5)*S,'#888'); }
+    else g+=R(U(f.x),Z(f.h),f.w*S,f.h*S,c,'stroke="#55625e" rx="2"');
+  });
+  [WALLS[2],WALLS[3],WALLS[6],...WALLS.filter(w=>w.id[0]==='I')].forEach(w=>g+=R(U(w.x-0.25),Z(10),0.5*S,10*S,'#26332f'));
+  g+=R(U(5.5),Z(10.5),51*S,0.5*S,'#26332f');
+  g+=R(U(5.5),Z(11.5),25.5*S,1*S,'#4f7d34')+R(U(6),Z(11.1),24.5*S,0.6*S,'#6fae4a');
+  PANELS.filter(p=>p.y===16).forEach(p=>g+=R(U(p.x),Z(12.1),p.w*S,1.6*S,'#1d3f73'));
+  const lab=[['Baño M',8],['Baño H',12],['Habitación 1',19],['Habitación 2',29],['Enfermería',40],['Urgencias',51]];
+  lab.forEach(([n,x])=>g+=T(U(x),Z(8.6),n,`text-anchor="middle" style="fill:${DARK};font-weight:700;font-size:${n.startsWith('Baño')?9:12}px;font-family:var(--f-display)"`));
+  g+=R(U(4),Z(0),54*S,0.6*S,'#c9ccc8');
+  g+=`<g ${INK}><line x1="${U(4.6)}" y1="${Z(0)}" x2="${U(4.6)}" y2="${Z(10)}"/>${T(U(4.4),Z(5),'10','text-anchor="end"')}${T(U(18),Z(12.6),'azotea verde','text-anchor="middle"')}${T(U(44),Z(13.9)+2,'paneles solares','text-anchor="middle"')}</g>`;
+  return svgWrap(`-30 0 ${54*S+34} ${14.4*S}`, g);
+}
+function wallTemplates(){
+  const S=10; let g='', y=10;
+  WALLS.filter(w=>w.ends).forEach(w=>{
+    const L=w.b-w.a, x0=20;
+    g+=T(x0,y+12,`Pieza ${w.id} · ${w.name} · ${L} × 10 cm`,`style="font-family:var(--f-display);font-weight:700;font-size:13px;fill:var(--plan-ink)"`);
+    const top=y+22, Z=z=>top+(10-z)*S;
+    g+=R(x0,top,L*S,10*S,'#f4f2ec','stroke="#26332f" stroke-width="1.5"');
+    w.ops.forEach(o=>{ const z=OPZ[o.t]; g+=R(x0+(o.a-w.a)*S,Z(z[1]),(o.b-o.a)*S,(z[1]-z[0])*S,'#cfe9f5','stroke="#26332f" stroke-dasharray="3 2"');
+      const lbl = `${+(o.b-o.a).toFixed(1)}×${z[1]-z[0]}`; g+=T(x0+((o.a+o.b)/2-w.a)*S,Z(z[1])-3,lbl,'text-anchor="middle" style="font-size:9px;fill:#26332f"'); });
+    g+=T(x0+2,top-2,'◀ '+w.ends[0],'style="font-size:9px;fill:var(--plan-ink)"').replace(`y="${top-2}"`,`y="${top+10*S+40}"`);
+    g+=T(x0+L*S,top+10*S+40,w.ends[1]+' ▶','text-anchor="end" style="font-size:9px;fill:var(--plan-ink)"');
+    const marks=[0,...w.ops.flatMap(o=>[o.a-w.a,o.b-w.a]),L];
+    marks.forEach((m,i)=>{ const mx=x0+m*S; g+=`<line x1="${mx}" y1="${top+10*S+2}" x2="${mx}" y2="${top+10*S+(i%2?20:10)}" stroke="var(--plan-ink)"/>`+T(mx,top+10*S+(i%2?29:19),+m.toFixed(1),'text-anchor="middle" style="font-size:9px;fill:var(--plan-ink)"'); });
+    y=top+10*S+56;
+  });
+  g+=T(20,y+12,'Piezas H (3) · 11 × 10 cm      Piezas I (4) · 12 × 10 cm   (sin huecos)',`style="font-family:var(--f-display);font-weight:700;font-size:13px;fill:var(--plan-ink)"`);
+  for(let k=0;k<3;k++) g+=R(20+k*120,y+22,110,100,'#f4f2ec','stroke="#26332f"');
+  for(let k=0;k<4;k++) g+=R(20+k*130,y+136,120,100,'#f4f2ec','stroke="#26332f"');
+  y+=250;
+  return svgWrap(`0 0 560 ${y}`, g);
+}
+
+/* ===== Pintar planos, tabla y guion ===== */
+const tkStyle = document.createElement('style');
+tkStyle.textContent = '.plansvg .tk{stroke:var(--plan-dim);fill:none;stroke-width:1}.plansvg .tk text{fill:var(--plan-dim);stroke:none;font-size:12px}';
+document.head.appendChild(tkStyle);
+document.getElementById('sitePlan').innerHTML = sitePlan();
+document.getElementById('floorPlan').innerHTML = floorPlan();
+document.getElementById('frontElev').innerHTML = frontElev();
+document.getElementById('sideElev').innerHTML = sideElev();
+document.getElementById('sectionView').innerHTML = sectionView();
+document.getElementById('wallTemplates').innerHTML = wallTemplates();
+
+(function(){
+  const tb=document.querySelector('#matTable tbody'); let tot=0;
+  tb.innerHTML = MATS.map(([n,q,u,t,s,c])=>{ tot+=c; return `<tr><td>${n}</td><td class="num">${q}</td><td>${u}</td><td>${t==='must'?'<span class="tag must">Indispensable</span>':'<span class="tag swap">Sustituible</span> '+s}</td><td class="num">${c?'$'+c:'$0'}</td></tr>`; }).join('');
+  document.getElementById('matTotal').textContent = '$'+tot.toLocaleString('es-MX');
+  document.getElementById('scriptList').innerHTML = STAGES.map((s,i)=>`<div class="card"><span class="stage-num">${i?'ETAPA '+i:'INTRODUCCIÓN'} · ${s.t}</span><p class="script">${s.s}</p><div class="row"><button type="button" data-say="${i}">Escuchar</button></div></div>`).join('');
+})();
+
+/* ===== Voz ===== */
+const VOICE = { on:true, voice:null };
+function pickVoice(){ try{ const vs=speechSynthesis.getVoices(); VOICE.voice = vs.find(v=>/es[-_]MX/i.test(v.lang)) || vs.find(v=>/es[-_]US/i.test(v.lang)) || vs.find(v=>/^es/i.test(v.lang)) || null; }catch(e){} }
+try{ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }catch(e){}
+function speak(text, onend){
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='es-MX'; u.rate=0.95; u.pitch=1; if(VOICE.voice) u.voice=VOICE.voice;
+    if(onend){ u.onend=onend; u.onerror=onend; } speechSynthesis.speak(u); return true; }
+  catch(e){ if(onend) setTimeout(onend, 6000); return false; }
+}
+function stopSpeak(){ try{ speechSynthesis.cancel(); }catch(e){} }
+document.addEventListener('click', e=>{
+  const b=e.target.closest('[data-say]'); if(b){ speak(STAGES[+b.dataset.say].s); }
+  const st=e.target.closest('.stage'); if(!st) return; const n=+st.dataset.stage;
+  if(e.target.closest('.say')) speak(STAGES[n].s);
+  if(e.target.closest('.go3d')){ document.getElementById('propuesta').scrollIntoView({behavior:'smooth'}); if(window.HV) HV.setStage(n, true); }
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+const host=document.getElementById('viewer'), msg=document.getElementById('viewerMsg');
+if(!window.THREE){ msg.textContent='No se pudo cargar el visor 3D. Los planos de abajo tienen toda la información.'; return; }
+let renderer;
+try{ renderer=new THREE.WebGLRenderer({antialias:true,alpha:true}); }catch(e){ msg.textContent='Tu navegador no muestra 3D. Usa los planos de la sección 3.'; return; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+host.prepend(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(38,1,0.5,600);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.maxPolarAngle=Math.PI*0.495; controls.minDistance=12; controls.maxDistance=220;
+scene.add(new THREE.HemisphereLight(0xffffff,0x9aa59a,0.75));
+const sun=new THREE.DirectionalLight(0xffffff,0.75); sun.position.set(-40,90,60); sun.castShadow=true;
+Object.assign(sun.shadow.camera,{left:-60,right:60,top:60,bottom:-60,near:1,far:250}); sun.shadow.mapSize.set(2048,2048); sun.shadow.bias=-0.0006;
+scene.add(sun);
+
+const ALL=[]; let P=scene, ST=1; const mats={};
+const mat=(c,o)=>{ const k=c+(o||''); if(!mats[k]) mats[k]=new THREE.MeshLambertMaterial(o?{color:c,transparent:true,opacity:o,depthWrite:false}:{color:c}); return mats[k]; };
+function tag(o){ o.userData.stage=ST; o.userData.baseY=o.position.y; ALL.push(o); P.add(o); return o; }
+function box(x,y,z,w,d,h,c,op){ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d), Array.isArray(c)?c:(c.isMaterial?c:mat(c,op))); m.position.set(x+w/2-40,z+h/2,y+d/2-30); if(!op){m.castShadow=true;m.receiveShadow=true;} return tag(m); }
+function cyl(x,y,z,r,h,c,seg=20){ const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,seg),mat(c)); m.position.set(x-40,z+h/2,y-30); m.castShadow=m.receiveShadow=true; return tag(m); }
+function ball(x,y,z,r,c){ const m=new THREE.Mesh(new THREE.IcosahedronGeometry(r,1),mat(c)); m.position.set(x-40,z,y-30); m.castShadow=true; return tag(m); }
+function texText(txt,bg,fg,W=512,Hh=128,size=70){ const cv=document.createElement('canvas'); cv.width=W; cv.height=Hh; const x=cv.getContext('2d'); x.fillStyle=bg; x.fillRect(0,0,W,Hh); x.fillStyle=fg; let fs=size; x.font=`bold ${fs}px Archivo, Arial, sans-serif`; while(x.measureText(txt).width>W*0.88 && fs>10){ fs-=4; x.font=`bold ${fs}px Archivo, Arial, sans-serif`; } x.textAlign='center'; x.textBaseline='middle'; x.fillText(txt,W/2,Hh/2+4); const t=new THREE.CanvasTexture(cv); t.anisotropy=4; return t; }
+function sign(txt,x,y,z,w,h,rotY,bg,fg,size){ const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:texText(txt,bg,fg,512,Math.round(512*h/w),size)})); m.position.set(x-40,z,y-30); m.rotation.y=rotY||0; return tag(m); }
+
+function addWall(w,c){ const t=H.t; const seg=(a,b,z0,z1)=>{ if(b-a<=0.001||z1-z0<=0.001) return; if(w.o==='h') box(a,w.y-t/2,z0,b-a,t,z1-z0,c); else box(w.x-t/2,a,z0,t,b-a,z1-z0,c); };
+  solids(w).forEach(([a,b])=>seg(a,b,0,10)); w.ops.forEach(o=>{ const z=OPZ[o.t]; seg(o.a,o.b,0,z[0]); seg(o.a,o.b,z[1],10); }); }
+
+/* ETAPA 1: base */
+ST=1; box(0,0,-1,80,60,1,'#f4f4ef'); box(0.2,0.2,-1.6,79.6,59.6,0.6,'#b48a5a');
+/* ETAPA 2: trazo */
+ST=2; { const pts=[]; const L=(x1,y1,x2,y2)=>pts.push(x1-40,0.02,y1-30,x2-40,0.02,y2-30);
+  WALLS.forEach(w=> w.o==='h'?L(w.a,w.y,w.b,w.y):L(w.x,w.a,w.x,w.b));
+  [[0,50,80,50],[0,46,80,46],[57,10,57,50],[65,6,65,46],[65,6,80,6],[6,40,56,40]].forEach(a=>L(...a));
+  for(let j=6;j<=46;j+=8) L(65,j,80,j);
+  for(let i=5;i<80;i+=5) L(i,0,i,60); for(let j=5;j<60;j+=5) L(0,j,80,j);
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+  tag(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0x6b7f78,transparent:true,opacity:.55}))); }
+/* ETAPA 3 y 4: muros */
+ST=3; WALLS.filter(w=>w.ext).forEach(w=>addWall(w,'#f7f7f2'));
+ST=4; WALLS.filter(w=>!w.ext).forEach(w=>addWall(w,'#fcfcf9'));
+/* ETAPA 5: vidrios y puertas */
+ST=5; WALLS.forEach(w=>w.ops.forEach(o=>{ const z=OPZ[o.t];
+  if(o.t==='w'||o.t==='wb'){ if(w.o==='h') box(o.a,w.y-0.03,z[0],o.b-o.a,0.06,z[1]-z[0],'#8fcbe6',0.45); else box(w.x-0.03,o.a,z[0],0.06,o.b-o.a,z[1]-z[0],'#8fcbe6',0.45);
+    if(w.o==='h') box(o.a,w.y-0.3,z[0]-0.15,o.b-o.a,0.6,0.15,'#ffffff'); else box(w.x-0.3,o.a,z[0]-0.15,0.6,o.b-o.a,0.15,'#ffffff'); }
+  else if(o.t==='d2'){ const m=(o.a+o.b)/2; [[o.a,m],[m,o.b]].forEach(([a,b])=>{ if(w.o==='h'){ box(a+0.05,w.y-0.03,0,b-a-0.1,0.06,6.95,'#8fcbe6',0.5); box(a,w.y-0.1,0,0.12,0.2,7,'#b8c0c6'); box(b-0.12,w.y-0.1,0,0.12,0.2,7,'#b8c0c6'); } else { box(w.x-0.03,a+0.05,0,0.06,b-a-0.1,6.95,'#8fcbe6',0.5); box(w.x-0.1,a,0,0.2,0.12,7,'#b8c0c6'); box(w.x-0.1,b-0.12,0,0.2,0.12,7,'#b8c0c6'); } }); }
+  else if(o.t==='d'){ const L=o.b-o.a-0.1; const side = w.o==='h' ? (w.y>25?1:-1) : 1; const ang=70*Math.PI/180;
+    const dir = w.o==='h' ? [Math.cos(ang), side*Math.sin(ang)] : [Math.sin(ang)*side, Math.cos(ang)];
+    const pv=new THREE.Group(); const hx = w.o==='h'?o.a:w.x, hy = w.o==='h'?w.y:o.a; pv.position.set(hx-40,0,hy-30); pv.rotation.y=Math.atan2(-dir[1],dir[0]);
+    const leaf=new THREE.Mesh(new THREE.BoxGeometry(L,6.9,0.15),mat('#c79b62')); leaf.position.set(L/2,3.45,0); leaf.castShadow=true; pv.add(leaf); tag(pv); } }));
+/* ETAPA 6: pisos y techo */
+ST=6; ROOMS.forEach(r=>box(r.x0+0.25,r.y0+0.25,0,r.x1-r.x0-0.5,r.y1-r.y0-0.5,0.1,r.c));
+const roof=new THREE.Group(); scene.add(roof); P=roof;
+box(5.5,9.5,10,25.45,31,0.5,'#dcdad3'); box(31.05,9.5,10,25.45,31,0.5,'#dcdad3');
+P=scene;
+
+/* ETAPA 7: muebles */
+ST=7;
+function legs(f,hh,c='#8a8f93',s=0.3){ [[0,0],[f.w-s,0],[0,f.d-s],[f.w-s,f.d-s]].forEach(([a,b])=>box(f.x+a,f.y+b,0,s,s,hh,c)); }
+FURN.forEach(f=>{ const c=f.c||FCOL[f.k];
+  switch(f.k){
+    case 'bed': legs(f,0.8); box(f.x,f.y,0.8,f.w,f.d,0.4,'#e3e6e8'); box(f.x+0.1,f.y+0.3,1.2,f.w-0.2,f.d-0.4,0.6,'#ffffff'); box(f.x+0.05,f.y+2.4,1.8,f.w-0.1,f.d-2.5,0.15,'#6fa6d4'); box(f.x+0.5,f.y+0.5,1.8,f.w-1,1,0.35,'#f2f5f7'); box(f.x,f.y,0,f.w,0.3,3.5,'#e6e1d6'); box(f.x,f.y+f.d-0.3,0,f.w,0.3,2.5,'#e6e1d6'); break;
+    case 'stretcher': legs(f,f.h-0.5); box(f.x,f.y,f.h-0.5,f.w,f.d,0.5,'#9fd0e8'); box(f.x+0.3,f.y+1,f.h,f.w-0.6,4,0.05,'#ffffff'); box(f.x+0.2,f.y+0.2,f.h,f.w-0.4,0.8,0.4,'#b9dff0'); break;
+    case 'desk': box(f.x,f.y,0,0.3,f.d,f.h-0.3,'#b98f5a'); box(f.x+f.w-0.3,f.y,0,0.3,f.d,f.h-0.3,'#b98f5a'); box(f.x,f.y,f.h-0.3,f.w,f.d,0.3,c); box(f.x+1.4,f.y+0.6,f.h,1.2,0.15,0.9,'#222'); box(f.x+0.4,f.y+0.6,f.h,0.8,1,0.05,'#ffffff'); break;
+    case 'table': legs(f,f.h-0.3,'#9b7650'); box(f.x,f.y,f.h-0.3,f.w,f.d,0.3,c); box(f.x+1,f.y+0.6,f.h,1.2,0.8,0.5,'#ffffff'); break;
+    case 'chair': legs(f,1.4,'#666',0.2); box(f.x,f.y,1.4,f.w,f.d,0.25,c); box(f.x,f.y+f.d-0.2,1.65,f.w,0.2,1.2,c); break;
+    case 'bench': box(f.x+0.3,f.y+0.2,0,0.4,0.9,1.3,'#666'); box(f.x+f.w-0.7,f.y+0.2,0,0.4,0.9,1.3,'#666'); box(f.x,f.y,1.3,f.w,f.d,0.3,c); box(f.x,f.y+f.d-0.25,1.6,f.w,0.25,1.2,c); break;
+    case 'counter': box(f.x,f.y,0,f.w,f.d,f.h-0.2,c); box(f.x-0.2,f.y-0.2,f.h-0.2,f.w+0.4,f.d+0.4,0.2,'#e9e4da'); break;
+    case 'shelf': { const along=f.d>f.w; box(f.x,f.y,0,f.w,f.d,f.h,'#e2cfae'); [1.5,3,4.5].forEach(z=>{ for(let k=0;k<4;k++){ const cc=['#e45d4f','#4a90d9','#f2c230','#5fb36b'][(k+z*2)%4]; if(along) box(f.x+f.w+0.01,f.y+0.4+k*1.4,z,0.3,0.9,0.9,cc); else box(f.x+0.4+k*1.4,f.y-0.3,z,0.9,0.3,0.9,cc); } }); break; }
+    case 'toilet': box(f.x,f.y,0,f.w,0.6,1.8,'#f4f6f8'); box(f.x+0.1,f.y+0.6,0,f.w-0.2,1.3,1,'#ffffff'); break;
+    case 'sink': box(f.x+0.35,f.y+0.6,0,0.3,0.3,1.6,'#ddd'); box(f.x,f.y,1.6,f.w,f.d,0.4,'#ffffff'); break;
+    case 'night': box(f.x,f.y,0,f.w,f.d,f.h,c); cyl(f.x+0.75,f.y+0.75,f.h,0.35,0.9,'#f3e2a6'); break;
+    case 'armchair': box(f.x,f.y,0,f.w,f.d,1,c); box(f.x,f.y+f.d-0.35,1,f.w,0.35,1,c); break;
+    case 'plant': cyl(f.x+0.6,f.y+0.6,0,0.5,1,'#b4693c'); ball(f.x+0.6,f.y+0.6,1.9,0.9,'#4f9a3a'); break;
+    case 'cart': box(f.x,f.y,0.3,f.w,f.d,f.h-0.3,c); [[0.2,0.2],[f.w-0.2,0.2],[0.2,f.d-0.2],[f.w-0.2,f.d-0.2]].forEach(([a,b])=>cyl(f.x+a,f.y+b,0,0.18,0.3,'#333',8)); break;
+    case 'cartRed': box(f.x,f.y,0.3,f.w,f.d,f.h-0.3,c); box(f.x+0.2,f.y+0.2,f.h,f.w-0.4,f.d-0.4,0.3,'#ffffff'); break;
+    case 'screen': box(f.x,f.y,0,0.12,0.12,f.h,'#999'); box(f.x+f.w-0.12,f.y,0,0.12,0.12,f.h,'#999'); box(f.x+0.12,f.y,0.8,f.w-0.24,0.05,f.h-0.8,c); break;
+    case 'wheel': box(f.x+0.2,f.y,0.9,1.1,f.d,0.25,'#3a3f45'); box(f.x+0.2,f.y+f.d-0.2,1.1,1.1,0.2,1,'#3a3f45'); [f.x,f.x+f.w-0.15].forEach(x=>{ const m=cyl(x+0.07,f.y+0.75,0.1,0.75,0.12,'#555',16); m.rotation.z=Math.PI/2; m.position.y=0.8; m.userData.baseY=0.8; }); break;
+    default: box(f.x,f.y,0,f.w,f.d,f.h,c);
+  } });
+
+/* ETAPA 8: decoración */
+ST=8;
+box(29.6,31.6,4.8,0.15,3,1.8,'#1f2326'); box(29.55,31.75,4.95,0.05,2.7,1.5,'#3a6ea5');
+[[15.2,6.2,'#e9a23b'],[25.2,6.2,'#7fb069'],[22.6,6.2,'#5aa0d8'],[32.6,6.2,'#e9a23b'],[43,6.2,'#7fb069']].forEach(([x,z,c])=>box(x,10.52,z,1.5,0.06,1.1,c));
+box(13.68,35,6.3,0.06,1.2,1.2,'#2e9c4f'); box(13.66,35.4,6.7,0.06,0.4,0.4,'#ffffff');
+cyl(44.9,24,0,0.45,0.9,'#b4693c'); ball(44.9,24,1.8,0.8,'#4f9a3a'); cyl(7.3,26.9,0,0.45,0.9,'#b4693c'); ball(7.3,26.9,1.8,0.8,'#4f9a3a');
+const plates=[[11.5,28.0],[34.5,28.0],[42.5,28.0]]; plates.forEach(([x,y])=>box(x-0.8,y-0.06,7.4,1.6,0.05,0.6,'#0b6f63'));
+[[8.25,23.03],[12.25,23.03],[17,23.03],[27,23.03],[36.5,23.03]].forEach(([x,y])=>box(x-0.8,y,7.4,1.6,0.05,0.6,'#0b6f63'));
+box(46,25.5,7.4,0.05,1.6,0.6,'#c2372c');
+box(16,30.7,3,1,0.6,0.7,'#222'); box(55.4,24.5,7.6,0.05,3,0.7,'#c2372c');
+
+/* ETAPA 9: ecotecnologías */
+ST=9;
+P=roof;
+[[5.5,9.5,25.5,0.5],[5.5,40,25.5,0.5],[5.5,9.5,0.5,31],[30.5,9.5,0.5,31]].forEach(([x,y,w,d])=>box(x,y,10.5,w,d,1,'#6b6a62'));
+box(6,10,10.5,24.5,30,0.1,'#222222');
+box(6,10,10.6,24.5,25.5,0.25,'#6fae4a'); box(11,35.5,10.6,19.5,4.5,0.25,'#6fae4a');
+box(6,35.5,10.6,5,4.5,0.4,'#9c9286'); box(7,35.5,11,4,4.5,0.1,'#d8cfb8'); box(8,35.5,11.1,3,4.5,0.35,'#6b4a2f'); box(9,35.5,11.45,2,4.5,0.25,'#6fae4a');
+box(17,10.5,10.85,2,29,0.08,'#c9a26a');
+[[20,18],[20,28]].forEach(([x,y])=>{ box(x,y,10.85,3,0.8,0.7,'#9b7650'); box(x,y+0.7,11.55,3,0.12,0.7,'#9b7650'); });
+[[10,16],[24,18],[12,28],[26,30],[14,13],[27,13],[23,36],[13,33]].forEach(([x,y],i)=>{ ball(x,y,11.3,0.9,'#4f8f35'); ball(x+0.6,y+0.3,11.9,0.3,['#f3c74e','#e86f8a','#f6f0e8'][i%3]); });
+const pcv=document.createElement('canvas'); pcv.width=240; pcv.height=160; { const x=pcv.getContext('2d'); x.fillStyle='#1d3f73'; x.fillRect(0,0,240,160); x.strokeStyle='#c7d3e6'; x.lineWidth=4; for(let i=0;i<=4;i++){x.beginPath();x.moveTo(i*60,0);x.lineTo(i*60,160);x.stroke();} for(let j=0;j<=2;j++){x.beginPath();x.moveTo(0,j*80);x.lineTo(240,j*80);x.stroke();} }
+const pMat=new THREE.MeshLambertMaterial({map:new THREE.CanvasTexture(pcv)}); const pSide=mat('#9aa3ab');
+PANELS.forEach(p=>{ const ang=Math.atan(1.5/4); const m=new THREE.Mesh(new THREE.BoxGeometry(6,0.25,4.27),[pSide,pSide,pMat,pSide,pSide,pSide]); m.position.set(p.x+3-40,10.5+0.85,p.y+2-30); m.rotation.x=ang; m.castShadow=true; tag(m); box(p.x,p.y,10.5,6,0.3,1.5,'#8a877f'); });
+box(51,9.6,10.5,0.15,6.5,0.15,'#111');
+P=scene;
+box(50,8.6,3,2,1.4,3,'#8a9097'); box(50.95,9.7,6,0.15,0.15,4.5,'#111');
+box(6,9.2,9,50,0.8,0.1,'#8a939b'); box(6,9.2,9,50,0.1,1,'#8a939b'); box(6,9.2,9,0.1,0.8,1,'#8a939b');
+cyl(55.4,9.5,0,0.35,9.1,'#7d8790'); box(55.2,8,0.1,0.4,1.5,0.5,'#7d8790');
+cyl(55.6,8,0,0.8,1.2,'#9aa3ab'); cyl(55.6,8,1.2,0.82,0.05,'#f4f4f4');
+cyl(CIST.x,CIST.y,0,CIST.r,CIST.h,'#a9b4bc',32); cyl(CIST.x,CIST.y,CIST.h,CIST.r*0.85,0.06,'#4fa8d6',32);
+const pipe=(x1,y1,x2,y2)=>box(Math.min(x1,x2)-0.25,Math.min(y1,y2)-0.25,0.15,Math.abs(x2-x1)+0.5,Math.abs(y2-y1)+0.5,0.5,'#2b8cc4');
+pipe(49,4,9,4); pipe(9,4,9,9.5); box(8.75,9.5,0.15,0.5,0.4,3,'#2b8cc4');
+box(46.2,3.6,0,0.15,0.15,3.5,'#777'); sign('AGUA DE LLUVIA',46.25,3.75,3.8,4,1,0,'#1f86b8','#ffffff',58);
+
+/* ETAPA 10: calles, jardines, marquesinas, árboles, autos */
+ST=10;
+const G=(x,y,w,d,c)=>box(x,y,0,w,d,0.12,c);
+G(0,0,65,10,'#8cc06b'); G(65,0,15,6,'#8cc06b'); G(0,10,6,36,'#8cc06b'); G(56,10,1,36,'#c9ccc8'); G(6,40,50,6,'#d9dbd7');
+G(0,46,57,4,'#c3c7c3'); G(65,46,15,4,'#c3c7c3'); G(57,10,8,40,'#5c6168'); G(0,50,80,10,'#4a4f55'); G(65,6,15,40,'#666b72');
+for(let x=1;x<80;x+=4) box(x,54.85,0.12,2,0.3,0.02,'#f2c230');
+for(let k=0;k<6;k++) box(18,50.6+k*1.6,0.12,8,0.8,0.02,'#f4f4f4');
+for(let j=6;j<=46;j+=8) box(65,j-0.15,0.12,15,0.3,0.02,'#ffffff');
+[44,16].forEach(y=>{ box(60.6,y,0.12,0.8,2.4,0.02,'#ffffff'); const sh=new THREE.Shape(); sh.moveTo(-1.4,0); sh.lineTo(1.4,0); sh.lineTo(0,-2); sh.lineTo(-1.4,0); const m=new THREE.Mesh(new THREE.ShapeGeometry(sh),mat('#ffffff')); m.rotation.x=-Math.PI/2; m.position.set(61-40,0.145,y-30); tag(m); });
+[[8,42],[32,42]].forEach(([x,y])=>{ box(x,y,0,8,3,0.8,'#8a6a48'); box(x+0.2,y+0.2,0.8,7.6,2.6,0.05,'#6fae4a'); });
+box(24.5,8.3,0.12,3,0.8,0.7,'#9b7650'); box(24.5,8.95,0.82,3,0.15,0.8,'#9b7650');
+TREES.forEach(([x,y,s])=>{ cyl(x,y,0,0.25*s+0.05,5*s,'#7a5636',8); ball(x,y,6.6*s,2*s,'#5f9e3f'); ball(x+0.8*s,y-0.5*s,7.5*s,1.2*s,'#77b552'); });
+box(17,40,8,10,4,0.4,'#f4f4f1'); cyl(17.5,43.5,0,0.15,8,'#9aa3ab',8); cyl(26.5,43.5,0,0.15,8,'#9aa3ab',8);
+box(56,21,9,8,10,0.4,'#f4f4f1'); box(63.8,21,8.5,0.2,10,0.9,'#c2372c'); cyl(63.5,21.5,0,0.15,9,'#9aa3ab',8); cyl(63.5,30.5,0,0.15,9,'#9aa3ab',8);
+function car(x,y,c,amb){ if(amb){ box(x,y,0.5,3.5,8,3,'#ffffff'); box(x,y+5.6,0.5,3.5,2.4,2.1,'#ffffff'); box(x-0.02,y+2,1.6,3.54,3,0.5,'#c2372c'); box(x+0.6,y+3,3.5,2.3,1,0.3,'#d83a2f'); box(x+0.2,y+7.95,1.6,3.1,0.1,1,'#2b3a44'); [[0.3,1],[3.2,1],[0.3,6.5],[3.2,6.5]].forEach(([a,b])=>{ const m=cyl(x+a,y+b,0,0.55,0.4,'#222',12); m.rotation.z=Math.PI/2; m.position.y=0.55; m.userData.baseY=0.55; }); return; }
+  box(x,y,0.4,7.5,3.5,1.1,c); box(x+1.8,y+0.3,1.5,3.6,2.9,0.9,'#cfe4ef'); box(x+1.9,y+0.3,2.4,3.4,2.9,0.1,c); [[1.2,0],[6.2,0],[1.2,3.5],[6.2,3.5]].forEach(([a,b])=>{ const m=cyl(x+a,y+b,0,0.55,0.35,'#222',12); m.rotation.x=Math.PI/2; m.position.y=0.55; m.userData.baseY=0.55; }); }
+car(59,22,0,true); car(68.75,16.25,'#e0a224'); car(68.75,32.25,'#3a74b8');
+
+/* ETAPA 11: pintura, letreros, señales */
+ST=11;
+WALLS.filter(w=>w.ext).forEach(w=>{ const out = {A:1,B:-1,C:-1,D:1}[w.id]; const t=0.06;
+  const band=(a,b,z0,h)=>{ if(w.o==='h') box(a,w.y+out*(H.t/2)+(out>0?0:-t),z0,b-a,t,h,'#3e9c8f'); else box(w.x+out*(H.t/2)+(out>0?0:-t),a,z0,t,b-a,h,'#3e9c8f'); };
+  solids(w).forEach(([a,b])=>band(a,b,0,1.5)); w.ops.forEach(o=>{ if(OPZ[o.t][0]>=1.5) band(o.a,o.b,0,1.5); }); band(w.a,w.b,9.3,0.7); });
+sign('HOSPITAL',22,40.12,9.2,8,1.4,0,'#0b6f63','#ffffff',150);
+sign('URGENCIAS',64.02,26,8.95,8,0.85,Math.PI/2,'#c2372c','#ffffff',100);
+sign('FARMACIA',10,40.12,8.4,4.5,0.8,0,'#2e9c4f','#ffffff',110);
+[[4,48,'H','#2a64c5'],[78,47.5,'E','#2a64c5'],[66,47.5,'+','#c2372c'],[56.5,47.5,'⊘','#c2372c'],[79.2,40,'♿','#2a64c5']].forEach(([x,y,l,c])=>{ cyl(x,y,0,0.1,5,'#777',6); sign(l,x,y+0.12,5.4,1.6,1.6,0,c,'#ffffff',380); });
+{ const m=new THREE.Mesh(new THREE.PlaneGeometry(5,5),new THREE.MeshBasicMaterial({map:texText('♿','#2a64c5','#ffffff',256,256,200)})); m.rotation.x=-Math.PI/2; m.position.set(72.5-40,0.15,42-30); tag(m); }
+
+/* ===== Estado y controles ===== */
+let stage=11, roofMode='lift', roofY=16, roofTarget=16; const anims=[];
+const range=document.getElementById('stageRange'), out=document.getElementById('stageOut'), badge=document.getElementById('stageBadge');
+function applyVis(){ ALL.forEach(o=>o.visible = o.userData.stage<=stage); roof.visible = roofMode!=='off' && stage>=6; }
+function setStage(n, anim){ const prev=stage; stage=n; range.value=n; out.textContent=n+' de 11'; applyVis();
+  const s=STAGES[n]; const first=s.s.split('. ').slice(1).find(x=>x.length>28)||''; badge.innerHTML=`<b>Etapa ${n} · ${s.t}</b><br><span class="muted">${first.replace(/\.$/,'')}.</span>`;
+  if(anim && !reduce){ const now=performance.now(); ALL.forEach(o=>{ if(o.userData.stage===n){ o.position.y=o.userData.baseY+14; anims.push({o,t0:now}); } }); } }
+const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setRoof(m){ roofMode=m; roofTarget = m==='lift'?16:0; document.querySelectorAll('[data-roof]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.roof===m)); applyVis(); }
+const CAMS={ iso:[[46,52,70],[0,2,2]], front:[[0,24,88],[0,5,0]], side:[[96,26,4],[0,5,0]], back:[[-30,40,-82],[0,4,0]], top:[[0,118,0.1],[0,0,0]], inside:[[-6,52,40],[-6,0,-4]] };
+let camAnim=null;
+function setCam(k){ const [p,t]=CAMS[k]; camAnim={from:camera.position.clone(),to:new THREE.Vector3(...p),tf:controls.target.clone(),tt:new THREE.Vector3(...t),t0:performance.now()}; if(k==='inside') setRoof('off'); }
+camera.position.set(...CAMS.iso[0]); controls.target.set(...CAMS.iso[1]);
+range.addEventListener('input',()=>setStage(+range.value,false));
+document.querySelectorAll('[data-roof]').forEach(b=>b.addEventListener('click',()=>setRoof(b.dataset.roof)));
+document.querySelectorAll('[data-cam]').forEach(b=>b.addEventListener('click',()=>setCam(b.dataset.cam)));
+const voiceBtn=document.getElementById('voiceBtn');
+voiceBtn.addEventListener('click',()=>{ VOICE.on=!VOICE.on; voiceBtn.setAttribute('aria-pressed',VOICE.on); voiceBtn.textContent='Voz: '+(VOICE.on?'activada':'desactivada'); if(!VOICE.on) stopSpeak(); });
+document.getElementById('speakBtn').addEventListener('click',()=>speak(STAGES[stage].s));
+let playing=false, timer=null; const playBtn=document.getElementById('playBtn');
+function stopPlay(){ playing=false; clearTimeout(timer); stopSpeak(); playBtn.textContent='▶ Ver construcción'; }
+function step(n){ if(!playing) return; if(n>11){ stopPlay(); return; }
+  setStage(n,true); if(n===6) setRoof('lift');
+  const next=()=>{ if(playing) timer=setTimeout(()=>step(n+1),700); };
+  if(VOICE.on){ let done=false; const fin=()=>{ if(!done){done=true; next();} }; speak(STAGES[n].s, fin); timer=setTimeout(()=>{},0); }
+  else timer=setTimeout(()=>step(n+1),3200); }
+playBtn.addEventListener('click',()=>{ if(playing){ stopPlay(); return; } playing=true; playBtn.textContent='■ Detener'; setCam('iso'); setRoof('lift');
+  if(VOICE.on){ setStage(11,false); speak(STAGES[0].s, ()=>{ if(playing) step(1); }); } else step(1); });
+window.HV={ setStage:(n,a)=>{ stopPlay(); setStage(n,a); if(n<6) setRoof('lift'); } };
+
+function resize(){ const w=host.clientWidth, h=host.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.fov = w<560?50:38; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(host); resize();
+setStage(11,false); msg.textContent='Arrastra para girar · pellizca o usa la rueda para acercar';
+setTimeout(()=>{ msg.style.opacity='0'; msg.style.transition='opacity 1s'; }, 6000);
+const ease=t=>1-Math.pow(1-t,3);
+function loop(now){ requestAnimationFrame(loop);
+  for(let i=anims.length-1;i>=0;i--){ const a=anims[i]; const k=Math.min(1,(now-a.t0)/900); a.o.position.y=a.o.userData.baseY+14*(1-ease(k)); if(k>=1) anims.splice(i,1); }
+  roofY += (roofTarget-roofY)*0.12; roof.position.y=roofY;
+  if(camAnim){ const k=Math.min(1,(now-camAnim.t0)/900), e=ease(k); camera.position.lerpVectors(camAnim.from,camAnim.to,e); controls.target.lerpVectors(camAnim.tf,camAnim.tt,e); if(k>=1) camAnim=null; }
+  controls.update(); renderer.render(scene,camera); }
+requestAnimationFrame(loop);
+})();
+</script>
